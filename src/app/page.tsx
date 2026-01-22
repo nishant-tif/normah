@@ -1,65 +1,284 @@
+"use client";
+
+import { Button, TextField, Typography, Box, Paper } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useAppDispatch } from "@/store";
+import { authService } from "@/services/dummyData";
 import Image from "next/image";
+import data from "@/config/Data.json";
 
 export default function Home() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  // Detect autofill after component mounts
+  useEffect(() => {
+    const checkAutofill = () => {
+      // Check email field
+      if (emailRef.current) {
+        const emailValue = emailRef.current.value;
+        if (emailValue && emailValue !== email) {
+          setEmail(emailValue);
+        }
+      }
+      // Check password field
+      if (passwordRef.current) {
+        const passwordValue = passwordRef.current.value;
+        if (passwordValue && passwordValue !== password) {
+          setPassword(passwordValue);
+        }
+      }
+    };
+
+    // Check after component mounts (autofill happens asynchronously)
+    const timeouts = [
+      setTimeout(checkAutofill, 100),
+      setTimeout(checkAutofill, 300),
+      setTimeout(checkAutofill, 500),
+    ];
+
+    const handleInput = () => {
+      checkAutofill();
+    };
+
+    if (emailRef.current) {
+      emailRef.current.addEventListener("input", handleInput);
+    }
+    if (passwordRef.current) {
+      passwordRef.current.addEventListener("input", handleInput);
+    }
+
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+      if (emailRef.current) {
+        emailRef.current.removeEventListener("input", handleInput);
+      }
+      if (passwordRef.current) {
+        passwordRef.current.removeEventListener("input", handleInput);
+      }
+    };
+  }, [email, password]);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      // const response = await authService.login({ email, password });
+      // if (typeof window !== 'undefined') {
+      //   localStorage.setItem('auth_token', response.token);
+      // }
+      router.push("/dashboard");
+    } catch (error) {
+      alert("Login failed. Please check your credentials.");
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Box
+      sx={{
+        minHeight: "100vh",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+      }}
+    >
+      {/* Top white section with logo */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "50%",
+          backgroundColor: "white",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          pt: 6,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            mb: 4,
+            height: "300px",
+          }}
+        >
+          <Image
+            src="/assets/normah-logo.png"
+            alt="Normah"
+            width={190}
+            height={190}
+          />
+        </Box>
+
+        {/* Watermark logo */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 20,
+            right: 40,
+
+            fontSize: "200px",
+            fontWeight: "bold",
+            color: "#000",
+          }}
+        >
+          <Image
+            style={{ opacity: 0.7 }}
+            src="/assets/Mask-group.png"
+            alt="Mask-group"
+            width={400}
+            height={400}
+          />
+        </Box>
+      </Box>
+
+      {/* Bottom black section with pattern */}
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "50%",
+          backgroundColor: "#000",
+          backgroundImage: `
+            url('/assets/login/login-bg.png')
+          `,
+        }}
+      />
+
+      {/* Login card */}
+      <Paper
+        elevation={8}
+        sx={{
+          position: "relative",
+          zIndex: 10,
+          maxWidth: 500,
+          width: "90%",
+          borderRadius: 3,
+          overflow: "hidden",
+          backgroundColor: "white",
+        }}
+      >
+        <Box sx={{ p: 5, pb: 4 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+              mb: 1,
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            Welcome Back
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: "center",
+              color: "#666",
+              mb: 4,
+            }}
+          >
+            Enter Your Email and Password to Sign In
+          </Typography>
+
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              fullWidth
+              label="Email Address"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="john1doe@gmail.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onAnimationStart={(e) => {
+                // Chrome autofill triggers animation
+                if (e.animationName === "onAutoFillStart") {
+                  const target = e.target as HTMLInputElement;
+                  if (target && target.value) {
+                    setEmail(target.value);
+                  }
+                }
+              }}
+              inputRef={emailRef}
+              InputLabelProps={{
+                shrink: !!email || undefined,
+              }}
+              size="medium"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 1,
+                },
+              }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              placeholder="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onAnimationStart={(e) => {
+                // Chrome autofill triggers animation
+                if (e.animationName === "onAutoFillStart") {
+                  const target = e.target as HTMLInputElement;
+                  if (target && target.value) {
+                    setPassword(target.value);
+                  }
+                }
+              }}
+              inputRef={passwordRef}
+              InputLabelProps={{
+                shrink: !!password || undefined,
+              }}
+              size="medium"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 1,
+                },
+              }}
+            />
+            <Box sx={{ pt: 2 }}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{
+                  backgroundColor: "#000",
+                  color: "white",
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  "&:hover": {
+                    backgroundColor: "#333",
+                  },
+                }}
+              >
+                SIGN IN
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Paper>
+    </Box>
   );
 }

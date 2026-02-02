@@ -129,7 +129,7 @@ const ComplianceStatus = () => {
               justifyContent: "center",
             }}
           >
-            <CircularRing value={data.compliance.overall} />
+            <CircularRing value={data?.compliance?.overall} />
           </Box>
 
           {/* Bottom rows */}
@@ -141,16 +141,16 @@ const ComplianceStatus = () => {
               justifyContent: "space-between",
             }}
           >
-            <ProgressRow label="EU AI Act" value={data.compliance.euAiAct} />
-            <ProgressRow label="ISO 42001" value={data.compliance.iso42001} />
+            <ProgressRow label="EU AI Act" value={data?.compliance?.euAiAct} />
+            <ProgressRow label="ISO 42001" value={data?.compliance?.iso42001} />
             <ProgressRow
               label="India DPDP Act"
-              value={data.compliance.indiaDpdpAct}
+              value={data?.compliance?.indiaDpdpAct}
               danger
             />
             <ProgressRow
               label="OECD Principles"
-              value={data.compliance.oecdPrinciples}
+              value={data?.compliance?.oecdPrinciples}
             />
           </Box>
         </CardContent>

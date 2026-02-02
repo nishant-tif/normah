@@ -4,15 +4,15 @@ import { Button, TextField, Typography, Box, Paper } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useAppDispatch } from "@/store";
-import { authService } from "@/services/dummyData";
+import { authService } from "@/services/dataService";
 import Image from "next/image";
 import data from "@/config/Data.json";
 
 export default function Home() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user_email, setUser_email] = useState("");
+  const [user_password, setUser_password] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -22,15 +22,15 @@ export default function Home() {
       // Check email field
       if (emailRef.current) {
         const emailValue = emailRef.current.value;
-        if (emailValue && emailValue !== email) {
-          setEmail(emailValue);
+        if (emailValue && emailValue !== user_email) {
+          setUser_email(emailValue);
         }
       }
       // Check password field
       if (passwordRef.current) {
         const passwordValue = passwordRef.current.value;
-        if (passwordValue && passwordValue !== password) {
-          setPassword(passwordValue);
+        if (passwordValue && passwordValue !== user_password) {
+          setUser_password(passwordValue);
         }
       }
     };
@@ -62,14 +62,15 @@ export default function Home() {
         passwordRef.current.removeEventListener("input", handleInput);
       }
     };
-  }, [email, password]);
+  }, [user_email, user_password]);
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      // const response = await authService.login({ email, password });
-      // if (typeof window !== 'undefined') {
-      //   localStorage.setItem('auth_token', response.token);
-      // }
+      const response = await authService.login({ user_email, user_password });
+      console.log("response", response);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("auth_token", response.token);
+      }
       router.push("/dashboard");
     } catch (error) {
       alert("Login failed. Please check your credentials.");
@@ -204,20 +205,20 @@ export default function Home() {
               autoComplete="email"
               placeholder="john1doe@gmail.com"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={user_email}
+              onChange={(e) => setUser_email(e.target.value)}
               onAnimationStart={(e) => {
                 // Chrome autofill triggers animation
                 if (e.animationName === "onAutoFillStart") {
                   const target = e.target as HTMLInputElement;
                   if (target && target.value) {
-                    setEmail(target.value);
+                    setUser_email(target.value);
                   }
                 }
               }}
               inputRef={emailRef}
               InputLabelProps={{
-                shrink: !!email || undefined,
+                shrink: !!user_email || undefined,
               }}
               size="medium"
               sx={{
@@ -234,20 +235,20 @@ export default function Home() {
               autoComplete="current-password"
               placeholder="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={user_password}
+              onChange={(e) => setUser_password(e.target.value)}
               onAnimationStart={(e) => {
                 // Chrome autofill triggers animation
                 if (e.animationName === "onAutoFillStart") {
                   const target = e.target as HTMLInputElement;
                   if (target && target.value) {
-                    setPassword(target.value);
+                    setUser_password(target.value);
                   }
                 }
               }}
               inputRef={passwordRef}
               InputLabelProps={{
-                shrink: !!password || undefined,
+                shrink: !!user_password || undefined,
               }}
               size="medium"
               sx={{

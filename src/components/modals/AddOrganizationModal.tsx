@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,26 +14,32 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { closeModal } from '@/store/slices/uiSlice';
-import { createOrganization, updateOrganization, setSelectedOrganization } from '@/store/slices/organizationsSlice';
-import type { Organization } from '@/types';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { closeModal } from "@/store/slices/uiSlice";
+import {
+  createOrganization,
+  updateOrganization,
+  setSelectedOrganization,
+} from "@/store/slices/organizationsSlice";
+import type { Organization } from "@/types";
 
 const AddOrganizationModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
-  const { selectedOrganization } = useAppSelector((state) => state.organizations);
-  const isOpen = activeModal === 'addOrganization';
+  const { selectedOrganization } = useAppSelector(
+    (state) => state.organizations,
+  );
+  const isOpen = activeModal === "addOrganization";
 
-  const [formData, setFormData] = useState<Omit<Organization, 'id'>>({
-    name: '',
-    organizationsName: '',
-    email: '',
-    address: '',
-    state: '',
-    city: '',
+  const [formData, setFormData] = useState<Omit<Organization, "id">>({
+    name: "",
+    organizationsName: "",
+    email: "",
+    address: "",
+    state: "",
+    city: "",
   });
 
   useEffect(() => {
@@ -48,12 +54,12 @@ const AddOrganizationModal: React.FC = () => {
       });
     } else {
       setFormData({
-        name: '',
-        organizationsName: '',
-        email: '',
-        address: '',
-        state: '',
-        city: '',
+        name: "",
+        organizationsName: "",
+        email: "",
+        address: "",
+        state: "",
+        city: "",
       });
     }
   }, [selectedOrganization, isOpen]);
@@ -67,24 +73,33 @@ const AddOrganizationModal: React.FC = () => {
     e.preventDefault();
     try {
       if (selectedOrganization) {
-        await dispatch(updateOrganization({ id: selectedOrganization.id, organization: formData })).unwrap();
+        await dispatch(
+          updateOrganization({
+            id: selectedOrganization.organization_id,
+            organization: formData,
+          }),
+        ).unwrap();
       } else {
         await dispatch(createOrganization(formData)).unwrap();
       }
       handleClose();
     } catch (error) {
-      console.error('Error saving organization:', error);
+      console.error("Error saving organization:", error);
     }
   };
 
-  const handleChange = (field: keyof typeof formData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: unknown } }
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
-  const states = ['Chandigarh', 'Delhi', 'Mumbai', 'Bangalore', 'Punjab'];
-  const cities = ['Chandigarh', 'Delhi', 'Mumbai', 'Bangalore', 'Ludhiana'];
+  const states = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Punjab"];
+  const cities = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Ludhiana"];
 
   return (
     <Dialog
@@ -96,9 +111,16 @@ const AddOrganizationModal: React.FC = () => {
         sx: { borderRadius: 2 },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Box sx={{ fontWeight: 600, fontSize: '1.25rem' }}>
-          {selectedOrganization ? 'Edit Organization' : 'Add New Organization'}
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          pb: 1,
+        }}
+      >
+        <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
+          {selectedOrganization ? "Edit Organization" : "Add New Organization"}
         </Box>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -107,11 +129,11 @@ const AddOrganizationModal: React.FC = () => {
 
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ pt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
               label="Name"
               value={formData.name}
-              onChange={handleChange('name')}
+              onChange={handleChange("name")}
               fullWidth
               required
             />
@@ -119,7 +141,7 @@ const AddOrganizationModal: React.FC = () => {
             <TextField
               label="Organizations Name"
               value={formData.organizationsName}
-              onChange={handleChange('organizationsName')}
+              onChange={handleChange("organizationsName")}
               fullWidth
               required
             />
@@ -128,7 +150,7 @@ const AddOrganizationModal: React.FC = () => {
               label="Email"
               type="email"
               value={formData.email}
-              onChange={handleChange('email')}
+              onChange={handleChange("email")}
               fullWidth
               required
             />
@@ -136,7 +158,7 @@ const AddOrganizationModal: React.FC = () => {
             <TextField
               label="Address"
               value={formData.address}
-              onChange={handleChange('address')}
+              onChange={handleChange("address")}
               fullWidth
               required
               multiline
@@ -147,7 +169,9 @@ const AddOrganizationModal: React.FC = () => {
               <InputLabel>State</InputLabel>
               <Select
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, state: e.target.value })
+                }
                 label="State"
               >
                 {states.map((state) => (
@@ -162,7 +186,9 @@ const AddOrganizationModal: React.FC = () => {
               <InputLabel>City</InputLabel>
               <Select
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
                 label="City"
               >
                 {cities.map((city) => (
@@ -176,17 +202,17 @@ const AddOrganizationModal: React.FC = () => {
         </DialogContent>
 
         <DialogActions sx={{ p: 2.5, pt: 1 }}>
-          <Button onClick={handleClose} sx={{ color: '#666' }}>
+          <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: '#000000',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333333',
+              backgroundColor: "#000000",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#333333",
               },
             }}
           >

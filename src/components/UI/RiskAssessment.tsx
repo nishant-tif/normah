@@ -59,7 +59,7 @@ const RiskAssessment = () => {
                       size="small"
                       sx={{ fontWeight: 600 }}
                     >
-                      {data.riskAssessment.critical.count}
+                      {data?.riskAssessment?.critical?.count}
                     </Typography>
                   </Box>
                 </CardContent>

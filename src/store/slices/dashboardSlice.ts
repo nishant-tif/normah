@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { dashboardService } from '@/services/dummyData';
-import type { DashboardData } from '@/types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { dashboardService } from "@/services/dataService";
+import type { DashboardData } from "@/types";
 
 interface DashboardState {
   data: DashboardData | null;
@@ -15,7 +15,7 @@ const initialState: DashboardState = {
 };
 
 export const fetchDashboardData = createAsyncThunk(
-  'dashboard/fetchData',
+  "dashboard/fetchData",
   async (_, { rejectWithValue }) => {
     try {
       const data = await dashboardService.getDashboardData();
@@ -23,11 +23,11 @@ export const fetchDashboardData = createAsyncThunk(
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
-  }
+  },
 );
 
 const dashboardSlice = createSlice({
-  name: 'dashboard',
+  name: "dashboard",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -40,10 +40,13 @@ const dashboardSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDashboardData.fulfilled, (state, action: PayloadAction<DashboardData>) => {
-        state.loading = false;
-        state.data = action.payload;
-      })
+      .addCase(
+        fetchDashboardData.fulfilled,
+        (state, action: PayloadAction<DashboardData>) => {
+          state.loading = false;
+          state.data = action.payload;
+        },
+      )
       .addCase(fetchDashboardData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;

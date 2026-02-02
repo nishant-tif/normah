@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,14 +13,18 @@ import {
   Paper,
   Chip,
   IconButton,
-} from '@mui/material';
-import Layout from '@/components/layout/Layout';
-import { AddModelModal } from '@/components/modals';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchModels, setSelectedModel, deleteModel } from '@/store/slices/modelsSlice';
-import { openModal } from '@/store/slices/uiSlice';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+} from "@mui/material";
+import Layout from "@/components/layout/Layout";
+import { AddModelModal } from "@/components/modals";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  fetchModels,
+  setSelectedModel,
+  deleteModel,
+} from "@/store/slices/modelsSlice";
+import { openModal } from "@/store/slices/uiSlice";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const ModelPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -32,52 +36,59 @@ const ModelPage: React.FC = () => {
 
   const handleAddNew = () => {
     dispatch(setSelectedModel(null));
-    dispatch(openModal('addModel'));
+    dispatch(openModal("addModel"));
   };
 
-  const handleEdit = (model: typeof models[0]) => {
+  const handleEdit = (model: (typeof models)[0]) => {
     dispatch(setSelectedModel(model));
-    dispatch(openModal('addModel'));
+    dispatch(openModal("addModel"));
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this model?')) {
+    if (confirm("Are you sure you want to delete this model?")) {
       await dispatch(deleteModel(id));
     }
   };
 
   const getRiskCategoryColor = (category: string) => {
     switch (category) {
-      case 'High':
-        return { bg: '#ffebee', color: '#d32f2f' };
-      case 'Medium':
-        return { bg: '#fff3e0', color: '#f57c00' };
-      case 'Good':
-        return { bg: '#e8f5e9', color: '#388e3c' };
-      case 'Low':
-        return { bg: '#e3f2fd', color: '#1976d2' };
+      case "High":
+        return { bg: "#ffebee", color: "#d32f2f" };
+      case "Medium":
+        return { bg: "#fff3e0", color: "#f57c00" };
+      case "Good":
+        return { bg: "#e8f5e9", color: "#388e3c" };
+      case "Low":
+        return { bg: "#e3f2fd", color: "#1976d2" };
       default:
-        return { bg: '#f5f5f5', color: '#666' };
+        return { bg: "#f5f5f5", color: "#666" };
     }
   };
 
   return (
     <Layout
       title="Model"
-      breadcrumbs={[{ label: 'Pages / Model' }]}
+      breadcrumbs={[{ label: "Pages / Model" }]}
       showSearch={true}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Box />
           <Button
             variant="contained"
             onClick={handleAddNew}
             sx={{
-              backgroundColor: '#000000',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333333',
+              backgroundColor: "#000000",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#333333",
               },
             }}
           >
@@ -88,14 +99,16 @@ const ModelPage: React.FC = () => {
         <TableContainer component={Paper} sx={{ boxShadow: 1 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                 <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Version</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Owner</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Organizations</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Framework</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Risk Category</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Artifact Location</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>
+                  Artifact Location
+                </TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Policy</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
               </TableRow>
@@ -121,8 +134,8 @@ const ModelPage: React.FC = () => {
                       key={model.id}
                       hover
                       sx={{
-                        '&:nth-of-type(odd)': {
-                          backgroundColor: '#fafafa',
+                        "&:nth-of-type(odd)": {
+                          backgroundColor: "#fafafa",
                         },
                       }}
                     >
@@ -145,18 +158,18 @@ const ModelPage: React.FC = () => {
                       <TableCell>{model.artifactLocation}</TableCell>
                       <TableCell>{model.policy}</TableCell>
                       <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <IconButton
                             size="small"
                             onClick={() => handleEdit(model)}
-                            sx={{ color: '#666' }}
+                            sx={{ color: "#666" }}
                           >
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                           <IconButton
                             size="small"
-                            onClick={() => handleDelete(model.id)}
-                            sx={{ color: '#666' }}
+                            onClick={() => handleDelete(model.model_id)}
+                            sx={{ color: "#666" }}
                           >
                             <MoreVertIcon fontSize="small" />
                           </IconButton>

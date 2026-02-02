@@ -12,11 +12,51 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Layout from "@/components/layout/Layout";
+import { authService } from "@/services/dataService";
+import { getCookie } from "@/helper/getCookie";
 
 const ProfilePage: React.FC = () => {
   const navigation = useRouter();
-  const navigateToLogout = () => {
-    navigation.push("/");
+  //  const handleSubmit = async (event: React.FormEvent) => {
+  //     event.preventDefault();
+  //     try {
+  //       const response = await authService.login({ user_email, user_password });
+  //       console.log("response", response);
+  //       if (typeof window !== "undefined") {
+  //         localStorage.setItem("auth_token", response.token);
+  //       }
+  //       router.push("/dashboard");
+  //     } catch (error) {
+  //       alert("Login failed. Please check your credentials.");
+  //     }
+  //   };
+  // const getCookies = async () => {
+  //   const cookieStore = await getCookie();
+
+  //   const accessToken = cookieStore.get("access_token")?.value;
+  //   const refreshToken = cookieStore.get("refresh_token")?.value;
+
+  //   console.log(accessToken, refreshToken);
+
+  //   return Response.json({ accessToken, refreshToken });
+  // };
+  const handleLogOut = async () => {
+    // navigation.push("/");
+
+    try {
+      console.log("Start");
+      const cookies = await getCookie();
+      console.log("cookies", cookies);
+      const response = await authService.logout({ cookies });
+      console.log("response", response);
+      // if (typeof window !== "undefined") {
+      //   localStorage.setItem("auth_token", response.token);
+      // }
+
+      navigation.push("/");
+    } catch (error) {
+      alert(error);
+    }
   };
   return (
     <Layout
@@ -111,7 +151,7 @@ const ProfilePage: React.FC = () => {
                         backgroundColor: "#FFCCCC",
                       },
                     }}
-                    onClick={navigateToLogout}
+                    onClick={handleLogOut}
                   >
                     Log Out
                   </Button>

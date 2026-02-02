@@ -1,59 +1,49 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { API_CONFIG } from '@/config/api';
+import axios, { AxiosInstance, AxiosError } from "axios";
+import { API_CONFIG } from "@/config/api";
 
-// Create axios instance with default config
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_CONFIG.baseURL,
   timeout: API_CONFIG.timeout,
-  headers: API_CONFIG.headers,
-});
-
-// Request interceptor for adding auth tokens and security headers
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Add auth token if available
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Add security headers
-    if (config.headers) {
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
-      // Add CSRF token if available
-      const csrfToken = typeof window !== 'undefined' ? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') : null;
-      if (csrfToken) {
-        config.headers['X-CSRF-Token'] = csrfToken;
-      }
-    }
-
-    return config;
+  headers: {
+    "Content-Type": "application/json",
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
-);
+  withCredentials: true,
+});
+const getTokenFromCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
 
-// Response interceptor for error handling
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
+// request interceptor to add auth token
+apiClient.interceptors.request.use((config) => {
+  const token = getTokenFromCookie("token"); // 👈 cookie name
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+/* ===============================
+   RESPONSE INTERCEPTOR
+=============================== */
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // Handle 401 Unauthorized - redirect to login
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token');
-        window.location.href = '/';
+    const status = error.response?.status;
+
+    if (status === 401 && typeof window !== "undefined") {
+      // prevent infinite redirect loop
+      if (window.location.pathname !== "/") {
+        window.location.replace("/");
       }
     }
 
-    // Handle other errors
-    const message = (error.response?.data as { message?: string })?.message || 
-                    (error instanceof Error ? error.message : 'An error occurred');
-    return Promise.reject({
-      ...error,
-      message,
-    });
-  }
+    return Promise.reject(error);
+  },
 );
 
 export default apiClient;

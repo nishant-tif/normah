@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,28 +14,32 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { closeModal } from '@/store/slices/uiSlice';
-import { createModel, updateModel, setSelectedModel } from '@/store/slices/modelsSlice';
-import type { Model } from '@/types';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { closeModal } from "@/store/slices/uiSlice";
+import {
+  createModel,
+  updateModel,
+  setSelectedModel,
+} from "@/store/slices/modelsSlice";
+import type { Model } from "@/types";
 
 const AddModelModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedModel } = useAppSelector((state) => state.models);
-  const isOpen = activeModal === 'addModel';
+  const isOpen = activeModal === "addModel";
 
-  const [formData, setFormData] = useState<Omit<Model, 'id'>>({
-    name: '',
-    version: '',
-    owner: '',
-    organizations: '',
-    framework: '',
-    riskCategory: 'High',
-    artifactLocation: '',
-    policy: '',
+  const [formData, setFormData] = useState<Omit<Model, "id">>({
+    name: "",
+    version: "",
+    owner: "",
+    organizations: "",
+    framework: "",
+    riskCategory: "High",
+    artifactLocation: "",
+    policy: "",
   });
 
   useEffect(() => {
@@ -52,14 +56,14 @@ const AddModelModal: React.FC = () => {
       });
     } else {
       setFormData({
-        name: '',
-        version: '',
-        owner: '',
-        organizations: '',
-        framework: '',
-        riskCategory: 'High',
-        artifactLocation: '',
-        policy: '',
+        name: "",
+        version: "",
+        owner: "",
+        organizations: "",
+        framework: "",
+        riskCategory: "High",
+        artifactLocation: "",
+        policy: "",
       });
     }
   }, [selectedModel, isOpen]);
@@ -73,21 +77,27 @@ const AddModelModal: React.FC = () => {
     e.preventDefault();
     try {
       if (selectedModel) {
-        await dispatch(updateModel({ id: selectedModel.id, model: formData })).unwrap();
+        await dispatch(
+          updateModel({ id: selectedModel.model_id, model: formData }),
+        ).unwrap();
       } else {
         await dispatch(createModel(formData)).unwrap();
       }
       handleClose();
     } catch (error) {
-      console.error('Error saving model:', error);
+      console.error("Error saving model:", error);
     }
   };
 
-  const handleChange = (field: keyof typeof formData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: unknown } }
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
   return (
     <Dialog
@@ -99,9 +109,16 @@ const AddModelModal: React.FC = () => {
         sx: { borderRadius: 2 },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Box sx={{ fontWeight: 600, fontSize: '1.25rem' }}>
-          {selectedModel ? 'Edit Model' : 'Add New Model'}
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          pb: 1,
+        }}
+      >
+        <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
+          {selectedModel ? "Edit Model" : "Add New Model"}
         </Box>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -110,11 +127,11 @@ const AddModelModal: React.FC = () => {
 
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ pt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
               label="Model Name"
               value={formData.name}
-              onChange={handleChange('name')}
+              onChange={handleChange("name")}
               fullWidth
               required
             />
@@ -122,7 +139,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Version"
               value={formData.version}
-              onChange={handleChange('version')}
+              onChange={handleChange("version")}
               fullWidth
               required
             />
@@ -130,7 +147,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Owner"
               value={formData.owner}
-              onChange={handleChange('owner')}
+              onChange={handleChange("owner")}
               fullWidth
               required
             />
@@ -138,7 +155,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Organizations"
               value={formData.organizations}
-              onChange={handleChange('organizations')}
+              onChange={handleChange("organizations")}
               fullWidth
               required
             />
@@ -146,7 +163,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Framework"
               value={formData.framework}
-              onChange={handleChange('framework')}
+              onChange={handleChange("framework")}
               fullWidth
               required
             />
@@ -155,7 +172,12 @@ const AddModelModal: React.FC = () => {
               <InputLabel>Risk Category</InputLabel>
               <Select
                 value={formData.riskCategory}
-                onChange={(e) => setFormData({ ...formData, riskCategory: e.target.value as Model['riskCategory'] })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    riskCategory: e.target.value as Model["riskCategory"],
+                  })
+                }
                 label="Risk Category"
               >
                 <MenuItem value="Low">Low</MenuItem>
@@ -168,7 +190,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Artifact Location"
               value={formData.artifactLocation}
-              onChange={handleChange('artifactLocation')}
+              onChange={handleChange("artifactLocation")}
               fullWidth
               required
             />
@@ -176,7 +198,7 @@ const AddModelModal: React.FC = () => {
             <TextField
               label="Policy"
               value={formData.policy}
-              onChange={handleChange('policy')}
+              onChange={handleChange("policy")}
               fullWidth
               required
             />
@@ -184,17 +206,17 @@ const AddModelModal: React.FC = () => {
         </DialogContent>
 
         <DialogActions sx={{ p: 2.5, pt: 1 }}>
-          <Button onClick={handleClose} sx={{ color: '#666' }}>
+          <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: '#000000',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333333',
+              backgroundColor: "#000000",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#333333",
               },
             }}
           >

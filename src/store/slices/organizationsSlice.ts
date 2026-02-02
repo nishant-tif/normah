@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { organizationService } from '@/services/dummyData';
-import type { Organization } from '@/types';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { organizationService } from "@/services/dataService";
+import type { Organization } from "@/types";
 
 interface OrganizationsState {
   organizations: Organization[];
@@ -17,7 +17,7 @@ const initialState: OrganizationsState = {
 };
 
 export const fetchOrganizations = createAsyncThunk(
-  'organizations/fetchAll',
+  "organizations/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
       const organizations = await organizationService.getAll();
@@ -25,35 +25,41 @@ export const fetchOrganizations = createAsyncThunk(
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
-  }
+  },
 );
 
 export const createOrganization = createAsyncThunk(
-  'organizations/create',
-  async (organization: Omit<Organization, 'id'>, { rejectWithValue }) => {
+  "organizations/create",
+  async (organization: Omit<Organization, "id">, { rejectWithValue }) => {
     try {
       const newOrganization = await organizationService.create(organization);
       return newOrganization;
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
-  }
+  },
 );
 
 export const updateOrganization = createAsyncThunk(
-  'organizations/update',
-  async ({ id, organization }: { id: string; organization: Partial<Organization> }, { rejectWithValue }) => {
+  "organizations/update",
+  async (
+    { id, organization }: { id: string; organization: Partial<Organization> },
+    { rejectWithValue },
+  ) => {
     try {
-      const updatedOrganization = await organizationService.update(id, organization);
+      const updatedOrganization = await organizationService.update(
+        id,
+        organization,
+      );
       return updatedOrganization;
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
-  }
+  },
 );
 
 export const deleteOrganization = createAsyncThunk(
-  'organizations/delete',
+  "organizations/delete",
   async (id: string, { rejectWithValue }) => {
     try {
       await organizationService.delete(id);
@@ -61,14 +67,17 @@ export const deleteOrganization = createAsyncThunk(
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
-  }
+  },
 );
 
 const organizationsSlice = createSlice({
-  name: 'organizations',
+  name: "organizations",
   initialState,
   reducers: {
-    setSelectedOrganization: (state, action: PayloadAction<Organization | null>) => {
+    setSelectedOrganization: (
+      state,
+      action: PayloadAction<Organization | null>,
+    ) => {
       state.selectedOrganization = action.payload;
     },
     clearError: (state) => {
@@ -81,31 +90,55 @@ const organizationsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchOrganizations.fulfilled, (state, action: PayloadAction<Organization[]>) => {
-        state.loading = false;
-        state.organizations = action.payload;
-      })
+      .addCase(
+        fetchOrganizations.fulfilled,
+        (state, action: PayloadAction<Organization[]>) => {
+          state.loading = false;
+          state.organizations = action.payload;
+        },
+      )
       .addCase(fetchOrganizations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(createOrganization.fulfilled, (state, action: PayloadAction<Organization>) => {
-        state.organizations.push(action.payload);
-      })
+      .addCase(
+        createOrganization.fulfilled,
+        (state, action: PayloadAction<Organization>) => {
+          state.organizations.push(action.payload);
+        },
+      )
       .addCase(createOrganization.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-      .addCase(updateOrganization.fulfilled, (state, action: PayloadAction<Organization>) => {
-        const index = state.organizations.findIndex(o => o.id === action.payload.id);
-        if (index !== -1) {
-          state.organizations[index] = action.payload;
-        }
+      .addCase(
+        updateOrganization.fulfilled,
+        (state, action: PayloadAction<Organization>) => {
+          const index = state.organizations.findIndex(
+            (o) => o.id === action.payload.id,
+          );
+          if (index !== -1) {
+            state.organizations[index] = action.payload;
+          }
+        },
+      )
+      .addCase(deleteOrganization.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(deleteOrganization.fulfilled, (state, action: PayloadAction<string>) => {
-        state.organizations = state.organizations.filter(o => o.id !== action.payload);
+      .addCase(
+        deleteOrganization.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.loading = false;
+          state.organizations = state.organizations.filter(
+            (o) => o.id !== action.payload,
+          );
+        },
+      )
+      .addCase(deleteOrganization.rejected, (state) => {
+        state.loading = false;
       });
   },
 });
 
-export const { setSelectedOrganization, clearError } = organizationsSlice.actions;
+export const { setSelectedOrganization, clearError } =
+  organizationsSlice.actions;
 export default organizationsSlice.reducer;

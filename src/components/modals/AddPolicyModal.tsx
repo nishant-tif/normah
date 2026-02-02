@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,26 +14,30 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { closeModal } from '@/store/slices/uiSlice';
-import { createPolicy, updatePolicy, setSelectedPolicy } from '@/store/slices/policiesSlice';
-import type { Policy } from '@/types';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { closeModal } from "@/store/slices/uiSlice";
+import {
+  createPolicy,
+  updatePolicy,
+  setSelectedPolicy,
+} from "@/store/slices/policiesSlice";
+import type { Policy } from "@/types";
 
 const AddPolicyModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedPolicy } = useAppSelector((state) => state.policies);
-  const isOpen = activeModal === 'addPolicy';
+  const isOpen = activeModal === "addPolicy";
 
-  const [formData, setFormData] = useState<Omit<Policy, 'id'>>({
-    policyName: '',
-    metricName: 'Accuracy',
-    operator: '>=',
-    expectedValue: '',
-    severity: 'High',
-    description: '',
+  const [formData, setFormData] = useState<Omit<Policy, "id">>({
+    policyName: "",
+    metricName: "Accuracy",
+    operator: ">=",
+    expectedValue: "",
+    severity: "High",
+    description: "",
   });
 
   useEffect(() => {
@@ -48,12 +52,12 @@ const AddPolicyModal: React.FC = () => {
       });
     } else {
       setFormData({
-        policyName: '',
-        metricName: 'Accuracy',
-        operator: '>=',
-        expectedValue: '',
-        severity: 'High',
-        description: '',
+        policyName: "",
+        metricName: "Accuracy",
+        operator: ">=",
+        expectedValue: "",
+        severity: "High",
+        description: "",
       });
     }
   }, [selectedPolicy, isOpen]);
@@ -67,21 +71,28 @@ const AddPolicyModal: React.FC = () => {
     e.preventDefault();
     try {
       if (selectedPolicy) {
-        await dispatch(updatePolicy({ id: selectedPolicy.id, policy: formData })).unwrap();
+        console.log("selectedPolicy", selectedPolicy);
+        await dispatch(
+          updatePolicy({ id: selectedPolicy.policy_id, policy: formData }),
+        ).unwrap();
       } else {
         await dispatch(createPolicy(formData)).unwrap();
       }
       handleClose();
     } catch (error) {
-      console.error('Error saving policy:', error);
+      console.error("Error saving policy:", error);
     }
   };
 
-  const handleChange = (field: keyof typeof formData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: unknown } }
-  ) => {
-    setFormData({ ...formData, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData({ ...formData, [field]: e.target.value });
+    };
 
   return (
     <Dialog
@@ -93,9 +104,16 @@ const AddPolicyModal: React.FC = () => {
         sx: { borderRadius: 2 },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Box sx={{ fontWeight: 600, fontSize: '1.25rem' }}>
-          {selectedPolicy ? 'Edit Policy' : 'Add New Policy'}
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          pb: 1,
+        }}
+      >
+        <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
+          {selectedPolicy ? "Edit Policy" : "Add New Policy"}
         </Box>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -104,11 +122,11 @@ const AddPolicyModal: React.FC = () => {
 
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ pt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
               label="Policy Name"
               value={formData.policyName}
-              onChange={handleChange('policyName')}
+              onChange={handleChange("policyName")}
               fullWidth
               required
             />
@@ -117,7 +135,9 @@ const AddPolicyModal: React.FC = () => {
               <InputLabel>Metric Name</InputLabel>
               <Select
                 value={formData.metricName}
-                onChange={(e) => setFormData({ ...formData, metricName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, metricName: e.target.value })
+                }
                 label="Metric Name"
               >
                 <MenuItem value="Accuracy">Accuracy</MenuItem>
@@ -129,20 +149,22 @@ const AddPolicyModal: React.FC = () => {
               <InputLabel>Operator</InputLabel>
               <Select
                 value={formData.operator}
-                onChange={(e) => setFormData({ ...formData, operator: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, operator: e.target.value })
+                }
                 label="Operator"
               >
-                <MenuItem value=">=">{'>='}</MenuItem>
-                <MenuItem value="<=">{'<='}</MenuItem>
+                <MenuItem value=">=">{">="}</MenuItem>
+                <MenuItem value="<=">{"<="}</MenuItem>
                 <MenuItem value="=">=</MenuItem>
-                <MenuItem value="!=">{'!='}</MenuItem>
+                <MenuItem value="!=">{"!="}</MenuItem>
               </Select>
             </FormControl>
 
             <TextField
               label="Expected Value"
               value={formData.expectedValue}
-              onChange={handleChange('expectedValue')}
+              onChange={handleChange("expectedValue")}
               fullWidth
               required
             />
@@ -150,7 +172,7 @@ const AddPolicyModal: React.FC = () => {
             <TextField
               label="Severity"
               value={formData.severity}
-              onChange={handleChange('severity')}
+              onChange={handleChange("severity")}
               fullWidth
               required
             />
@@ -158,7 +180,7 @@ const AddPolicyModal: React.FC = () => {
             <TextField
               label="Description"
               value={formData.description}
-              onChange={handleChange('description')}
+              onChange={handleChange("description")}
               fullWidth
               multiline
               rows={3}
@@ -167,17 +189,17 @@ const AddPolicyModal: React.FC = () => {
         </DialogContent>
 
         <DialogActions sx={{ p: 2.5, pt: 1 }}>
-          <Button onClick={handleClose} sx={{ color: '#666' }}>
+          <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: '#000000',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333333',
+              backgroundColor: "#000000",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#333333",
               },
             }}
           >

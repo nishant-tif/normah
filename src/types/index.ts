@@ -1,8 +1,8 @@
 // Type definitions for the application
 
 export interface LoginCredentials {
-  email: string;
-  password: string;
+  user_email: string;
+  user_password: string;
 }
 
 export interface LoginResponse {
@@ -15,23 +15,25 @@ export interface LoginResponse {
 }
 
 export interface Policy {
+  policy_id: string | null | undefined;
   id: string;
   policyName: string;
   metricName: string;
   operator: string;
   expectedValue: string;
-  severity: 'Low' | 'Medium' | 'High';
+  severity: "Low" | "Medium" | "High";
   description: string;
 }
 
 export interface Model {
+  model_id: string;
   id: string;
   name: string;
   version: string;
   owner: string;
   organizations: string;
   framework: string;
-  riskCategory: 'Low' | 'Medium' | 'High' | 'Good';
+  riskCategory: "Low" | "Medium" | "High" | "Good";
   artifactLocation: string;
   policy: string;
 }

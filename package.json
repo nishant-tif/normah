@@ -1,43 +1,34 @@
 {
-  "name": "normah",
-  "version": "0.1.0",
+  "name": "normah-frontend",
+  "author": "Aryann Walia",
+  "author-description": "A full stack developer with a passion for creating efficient and scalable web applications. With expertise in both frontend and backend technologies, I enjoy crafting seamless user experiences and robust server-side solutions. My goal is to build innovative applications that solve real-world problems and enhance user satisfaction.",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.7",
-    "@mui/material": "^7.3.7",
-    "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.2",
-    "next": "16.1.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-redux": "^9.2.0"
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@mui/material": "^5.14.20",
+    "@mui/icons-material": "^5.14.19",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@reduxjs/toolkit": "^2.0.1",
+    "react-redux": "^9.0.4",
+    "axios": "^1.6.2",
+    "react-hook-form": "^7.49.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.1",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.3",
-    "jest": "^30.2.0",
-    "jest-environment-jsdom": "^30.2.0",
-    "tailwindcss": "^4",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5"
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.4"
   }
 }

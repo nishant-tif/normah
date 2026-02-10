@@ -1,59 +1,75 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { API_CONFIG } from '@/config/api';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 
-// Create axios instance with default config
-const apiClient: AxiosInstance = axios.create({
-  baseURL: API_CONFIG.baseURL,
-  timeout: API_CONFIG.timeout,
-  headers: API_CONFIG.headers,
-});
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
-// Request interceptor for adding auth tokens and security headers
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// Request interceptor
+api.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
     // Add auth token if available
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Add security headers
-    if (config.headers) {
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
-      // Add CSRF token if available
-      const csrfToken = typeof window !== 'undefined' ? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') : null;
-      if (csrfToken) {
-        config.headers['X-CSRF-Token'] = csrfToken;
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token')
+      if (token) {
+        if (!config.headers) {
+          config.headers = {}
+        }
+        config.headers.Authorization = `Bearer ${token}`
       }
     }
-
-    return config;
+    return config
   },
   (error: AxiosError) => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-// Response interceptor for error handling
-apiClient.interceptors.response.use(
-  (response) => response,
+// Response interceptor
+api.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response
+  },
   (error: AxiosError) => {
-    // Handle 401 Unauthorized - redirect to login
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token');
-        window.location.href = '/';
+    if (error.response) {
+      // Handle specific error status codes
+      switch (error.response.status) {
+        case 401:
+          // Unauthorized - clear token and redirect to login
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token')
+            // Optionally redirect to login
+          }
+          break
+        case 403:
+          // Forbidden
+          console.error('Access forbidden')
+          break
+        case 404:
+          // Not found
+          console.error('Resource not found')
+          break
+        case 500:
+          // Server error
+          console.error('Server error')
+          break
+        default:
+          console.error('An error occurred')
       }
+    } else if (error.request) {
+      // Request made but no response received
+      console.error('Network error - no response received')
+    } else {
+      // Something else happened
+      console.error('Error:', error.message)
     }
-
-    // Handle other errors
-    const message = (error.response?.data as { message?: string })?.message || 
-                    (error instanceof Error ? error.message : 'An error occurred');
-    return Promise.reject({
-      ...error,
-      message,
-    });
+    return Promise.reject(error)
   }
-);
+)
 
-export default apiClient;
+export { api }

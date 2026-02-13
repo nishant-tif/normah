@@ -6,8 +6,10 @@ import type {
   Organization,
   LoginCredentials,
   LoginResponse,
+  Article,
 } from "@/types";
 import apiClient from "./api";
+import { ArticleSearchResponse, PaginationParams } from "@/types/article";
 
 /* ===============================
    AUTH SERVICE
@@ -23,6 +25,7 @@ export const authService = {
     return {
       token: response.data.data.accessToken,
       user: response.data.data.user,
+      message: response.data.message,
     };
   },
   logout: async (credentials: LoginCredentials): Promise<void> => {
@@ -227,5 +230,85 @@ export const organizationService = {
 
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(API_ENDPOINTS.ORGANIZATION_BY_ID(id));
+  },
+};
+
+/* ===============================
+   ARTICLES SERVICE
+=============================== */
+export const articleService = {
+  // Get all articles (search-based pagination)
+  search: async (params: PaginationParams): Promise<ArticleSearchResponse> => {
+    const response = await apiClient.post(
+      API_ENDPOINTS.ARTICLE_SEARCH, // should map to "/article/search"
+      params,
+    );
+    return response.data.data;
+  },
+
+  // Get article by ID
+  getById: async (id: string): Promise<Article> => {
+    const response = await apiClient.get(API_ENDPOINTS.ARTICLE_BY_ID(id));
+    return response.data.data.data;
+  },
+
+  // Create article
+  create: async (article: Omit<Article, "id">): Promise<Article> => {
+    const response = await apiClient.post(API_ENDPOINTS.ARTICLES, article);
+    return response.data.data.data;
+  },
+
+  // Update article
+  update: async (id: string, article: Partial<Article>): Promise<Article> => {
+    const response = await apiClient.put(
+      API_ENDPOINTS.ARTICLE_BY_ID(id),
+      article,
+    );
+    return response.data.data.data;
+  },
+
+  // Delete article
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(API_ENDPOINTS.ARTICLE_BY_ID(id));
+  },
+};
+
+/* ===============================
+   AUTHORS SERVICE
+=============================== */
+
+import type { Author } from "@/types/author";
+
+export const authorService = {
+  // Get all authors
+  getAll: async (): Promise<Author[]> => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTHORS);
+    return response.data.data;
+  },
+
+  // Get author by ID
+  getById: async (id: string): Promise<Author> => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTHOR_BY_ID(id));
+    return response.data.data;
+  },
+
+  // Create author
+  create: async (author: Omit<Author, "author_id">): Promise<Author> => {
+    const response = await apiClient.post(API_ENDPOINTS.AUTHORS, author);
+    return response.data.data.author;
+  },
+
+  // Update author
+  update: async (id: string, author: Partial<Author>): Promise<Author> => {
+    const response = await apiClient.put(
+      API_ENDPOINTS.AUTHOR_BY_ID(id),
+      author,
+    );
+    return response.data.data.author;
+  },
+
+  // Delete author (permanent)
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(API_ENDPOINTS.AUTHOR_BY_ID(id));
   },
 };

@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/store";
 import { authService } from "@/services/dataService";
 import Image from "next/image";
 import data from "@/config/Data.json";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const router = useRouter();
@@ -71,6 +72,7 @@ export default function Home() {
       if (typeof window !== "undefined") {
         localStorage.setItem("auth_token", response.token);
       }
+      toast.success(response.message || "Login successful!");
       router.push("/dashboard");
     } catch (error) {
       alert("Login failed. Please check your credentials.");

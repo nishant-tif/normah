@@ -6,6 +6,7 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
+  message: string;
   token: string;
   user: {
     id: string;
@@ -46,6 +47,11 @@ export interface Organization {
   address: string;
   state: string;
   city: string;
+}
+export interface Article {
+  id: string;
+  article_title: string;
+  author_id: string;
 }
 
 export interface DashboardData {

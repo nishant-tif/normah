@@ -1,11 +1,11 @@
 // API Configuration - Change this baseURL when real API is available
 export const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.normah.ai", // Change this to your API base URL
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.normah.ai",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 🔥 REQUIRED
+  withCredentials: true,
 };
 
 // API endpoints
@@ -28,4 +28,19 @@ export const API_ENDPOINTS = {
   // Organizations
   ORGANIZATIONS: "/organizations",
   ORGANIZATION_BY_ID: (id: string) => `/organizations/${id}`,
+
+  // articles
+  ARTICLES: "/article",
+  ARTICLE_BY_ID: (id: string) => `/article/${id}`,
+  ARTICLE_SEARCH: "/article/search",
+
+  // authors
+  AUTHORS: "/authors",
+  AUTHOR_BY_ID: (id: string) => `/authors/${id}`,
+  AUTHOR_SEARCH: "/authors/search",
+
+  // categories
+  CATEGORIES: "/category",
+  CATEGORY_SEARCH: "/category/search",
+  CATEGORY_BY_ID: (id: string) => `/category/${id}`,
 } as const;

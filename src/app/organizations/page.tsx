@@ -113,7 +113,7 @@ const OrganizationsPage: React.FC = () => {
               ) : (
                 organizations.map((organization) => (
                   <TableRow
-                    key={organization.organization_id}
+                    key={organization?.organization_id}
                     hover
                     sx={{
                       "&:nth-of-type(odd)": {

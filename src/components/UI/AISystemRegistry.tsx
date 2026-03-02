@@ -16,7 +16,7 @@ import {
 import { useAppSelector } from "@/store";
 
 const AISystemRegistry = () => {
-  const { data, loading } = useAppSelector((state) => state.dashboard);
+  const { data } = useAppSelector((state) => state.dashboard);
   return (
     <Box
       sx={{
@@ -61,7 +61,7 @@ const AISystemRegistry = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.aiSystems.map((system) => (
+                {(data?.aiSystems ?? []).map((system) => (
                   <TableRow key={system.id}>
                     <TableCell>{system.systemName}</TableCell>
                     <TableCell>

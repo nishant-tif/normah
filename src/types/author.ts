@@ -6,8 +6,8 @@ export interface Author {
   author_id: string;
   author_name: string;
   author_email: string;
-  owner?: Record<string, any>;
-  edit_by?: Record<string, any>;
+  owner?: Record<string, unknown>;
+  edit_by?: Record<string, unknown>;
   status_flag?: number;
   createdAt?: string;
   updatedAt?: string;

@@ -7,6 +7,10 @@ import type {
   LoginCredentials,
   LoginResponse,
   Article,
+  Category,
+  Country,
+  State,
+  City,
 } from "@/types";
 import apiClient from "./api";
 import { ArticleSearchResponse, PaginationParams } from "@/types/article";
@@ -28,16 +32,13 @@ export const authService = {
       message: response.data.message,
     };
   },
-  logout: async (credentials: LoginCredentials): Promise<void> => {
-    const response = await apiClient.post(API_ENDPOINTS.LOGOUT, credentials);
+  logout: async (): Promise<void> => {
+    const response = await apiClient.post(
+      API_ENDPOINTS.LOGOUT,
+      {},
+      { withCredentials: true },
+    );
     console.log("response logout", response);
-    // expected backend response:
-    // { data: { user, accessToken } }
-
-    // return {
-    //   token: response.data.data.accessToken,
-    //   user: response.data.data.user,
-    // };
   },
 };
 
@@ -270,6 +271,23 @@ export const articleService = {
   // Delete article
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(API_ENDPOINTS.ARTICLE_BY_ID(id));
+  },
+  getCategories: async (): Promise<Category[]> => {
+    const response = await apiClient.get(API_ENDPOINTS.CATEGORIES);
+    return response.data.data;
+  },
+
+  getCountries: async (): Promise<Country[]> => {
+    const response = await apiClient.get(API_ENDPOINTS.COUNTRIES);
+    return response.data.data;
+  },
+  getStates: async (id: string): Promise<State[]> => {
+    const response = await apiClient.get(API_ENDPOINTS.STATE_BY_ID(id));
+    return response.data.data;
+  },
+  getCities: async (id: string): Promise<City[]> => {
+    const response = await apiClient.get(API_ENDPOINTS.CITY_BY_ID(id));
+    return response.data.data;
   },
 };
 

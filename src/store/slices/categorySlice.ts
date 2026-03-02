@@ -3,7 +3,8 @@ import apiClient from "@/services/api";
 import { API_ENDPOINTS } from "@/config/api";
 
 export interface Category {
-  category_id: number;
+  id: string;
+  category_id: string;
   category_name: string;
   category_slug: string;
   status_flag: number;
@@ -50,7 +51,7 @@ export const fetchCategories = createAsyncThunk<
     );
 
     return response.data.data.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     return rejectWithValue(
       error.response?.data?.data?.message || error.message,
     );
@@ -66,7 +67,7 @@ export const createCategory = createAsyncThunk<Category, Partial<Category>>(
     try {
       const response = await apiClient.post(API_ENDPOINTS.CATEGORIES, data);
       return response.data.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(
         error.response?.data?.data?.message || error.message,
       );
@@ -87,7 +88,7 @@ export const updateCategory = createAsyncThunk<
       data,
     );
     return response.data.data.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     return rejectWithValue(
       error.response?.data?.data?.message || error.message,
     );
@@ -103,7 +104,7 @@ export const deleteCategory = createAsyncThunk<string, string>(
     try {
       await apiClient.delete(API_ENDPOINTS.CATEGORY_BY_ID(id));
       return id;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(
         error.response?.data?.data?.message || error.message,
       );

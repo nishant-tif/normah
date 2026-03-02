@@ -181,7 +181,7 @@ export const ArticleTable: React.FC<ArticleTableProps> = ({
                   <CircularProgress />
                 </TableCell>
               </TableRow>
-            ) : articles?.row?.length === 0 ? (
+            ) : articles?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -192,7 +192,7 @@ export const ArticleTable: React.FC<ArticleTableProps> = ({
                 </TableCell>
               </TableRow>
             ) : (
-              articles?.map((article) => (
+              articles?.map((article: Article) => (
                 <TableRow key={article.article_id || article.id} hover>
                   <TableCell sx={{ width: "100px" }}>
                     {article.article_thumbnail_image ? (

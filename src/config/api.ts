@@ -43,4 +43,18 @@ export const API_ENDPOINTS = {
   CATEGORIES: "/category",
   CATEGORY_SEARCH: "/category/search",
   CATEGORY_BY_ID: (id: string) => `/category/${id}`,
+
+  // countries  COUNTRIES: "/country",
+  COUNTRIES: "/country/search",
+  COUNTRY_BY_ID: (id: string) => `/country/${id}`,
+
+  // states
+  STATES: "/state",
+  STATE_SEARCH: "/state/search",
+  STATE_BY_ID: (id: string) => `/state/${id}`,
+
+  // cities
+  CITIES: "/city",
+  CITY_SEARCH: "/city/search",
+  CITY_BY_ID: (id: string) => `/city/${id}`,
 } as const;

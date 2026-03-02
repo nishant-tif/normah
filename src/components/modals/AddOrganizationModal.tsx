@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -25,52 +25,67 @@ import {
 } from "@/store/slices/organizationsSlice";
 import type { Organization } from "@/types";
 
+/* =====================================
+   EMPTY FORM (OUTSIDE COMPONENT)
+===================================== */
+const emptyForm: Omit<Organization, "id"> = {
+  name: "",
+  organization_id: "",
+  organizationsName: "",
+  email: "",
+  address: "",
+  state: "",
+  city: "",
+};
+
 const AddOrganizationModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedOrganization } = useAppSelector(
     (state) => state.organizations,
   );
+
   const isOpen = activeModal === "addOrganization";
 
-  const [formData, setFormData] = useState<Omit<Organization, "id">>({
-    name: "",
-    organizationsName: "",
-    email: "",
-    address: "",
-    state: "",
-    city: "",
-  });
+  /* =====================================
+     LOCAL STATE
+  ===================================== */
+  const [formData, setFormData] = useState<Omit<Organization, "id">>(emptyForm);
 
-  useEffect(() => {
-    if (selectedOrganization && isOpen) {
+  /* =====================================
+     HANDLE OPEN (RESET STATE SAFELY)
+  ===================================== */
+  const handleDialogEnter = () => {
+    if (selectedOrganization) {
       setFormData({
-        name: selectedOrganization.name,
-        organizationsName: selectedOrganization.organizationsName,
-        email: selectedOrganization.email,
-        address: selectedOrganization.address,
-        state: selectedOrganization.state,
-        city: selectedOrganization.city,
+        name: selectedOrganization.name ?? "",
+        organizationsName: selectedOrganization.organizationsName ?? "",
+        organization_id: selectedOrganization.organization_id ?? "",
+        email: selectedOrganization.email ?? "",
+        address: selectedOrganization.address ?? "",
+        state: selectedOrganization.state ?? "",
+        city: selectedOrganization.city ?? "",
       });
     } else {
-      setFormData({
-        name: "",
-        organizationsName: "",
-        email: "",
-        address: "",
-        state: "",
-        city: "",
-      });
+      setFormData(emptyForm);
     }
-  }, [selectedOrganization, isOpen]);
+  };
 
+  /* =====================================
+     CLOSE HANDLER
+  ===================================== */
   const handleClose = () => {
     dispatch(closeModal());
     dispatch(setSelectedOrganization(null));
+    setFormData(emptyForm);
   };
 
+  /* =====================================
+     SUBMIT HANDLER
+  ===================================== */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       if (selectedOrganization) {
         await dispatch(
@@ -82,12 +97,18 @@ const AddOrganizationModal: React.FC = () => {
       } else {
         await dispatch(createOrganization(formData)).unwrap();
       }
+
       handleClose();
-    } catch (error) {
-      console.error("Error saving organization:", error);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error saving organization:", err.message);
+      }
     }
   };
 
+  /* =====================================
+     CHANGE HANDLER (SAFE UPDATE)
+  ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
     (
@@ -95,7 +116,10 @@ const AddOrganizationModal: React.FC = () => {
         | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | { target: { value: unknown } },
     ) => {
-      setFormData({ ...formData, [field]: e.target.value });
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
     };
 
   const states = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Punjab"];
@@ -105,11 +129,10 @@ const AddOrganizationModal: React.FC = () => {
     <Dialog
       open={isOpen}
       onClose={handleClose}
+      // onEnter={handleDialogEnter} // ✅ SAFE RESET HERE
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: 2 },
-      }}
+      PaperProps={{ sx: { borderRadius: 2 } }}
     >
       <DialogTitle
         sx={{
@@ -122,6 +145,7 @@ const AddOrganizationModal: React.FC = () => {
         <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
           {selectedOrganization ? "Edit Organization" : "Add New Organization"}
         </Box>
+
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>
@@ -160,18 +184,16 @@ const AddOrganizationModal: React.FC = () => {
               value={formData.address}
               onChange={handleChange("address")}
               fullWidth
-              required
               multiline
               rows={2}
+              required
             />
 
             <FormControl fullWidth>
               <InputLabel>State</InputLabel>
               <Select
                 value={formData.state}
-                onChange={(e) =>
-                  setFormData({ ...formData, state: e.target.value })
-                }
+                onChange={handleChange("state")}
                 label="State"
               >
                 {states.map((state) => (
@@ -186,9 +208,7 @@ const AddOrganizationModal: React.FC = () => {
               <InputLabel>City</InputLabel>
               <Select
                 value={formData.city}
-                onChange={(e) =>
-                  setFormData({ ...formData, city: e.target.value })
-                }
+                onChange={handleChange("city")}
                 label="City"
               >
                 {cities.map((city) => (
@@ -205,15 +225,14 @@ const AddOrganizationModal: React.FC = () => {
           <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
+
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: "#000000",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
+              backgroundColor: "#000",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#333" },
             }}
           >
             Save

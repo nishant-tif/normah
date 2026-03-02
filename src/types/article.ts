@@ -43,7 +43,7 @@ export interface Country {
 
 export interface Article {
   id?: string;
-  article_id?: string;
+  article_id?: string | undefined;
   article_title: string;
   article_slug: string;
   article_content: string;
@@ -69,6 +69,9 @@ export interface Article {
   createdAt?: string;
   updatedAt?: string;
   edit_by?: string;
+  row?: unknown;
+  owner_id?: string;
+  Owner?: Author;
 }
 
 export interface ArticleSearchResponse {
@@ -96,7 +99,7 @@ export interface CreateArticleRequest {
   country_id?: string;
 }
 
-export interface UpdateArticleRequest extends Partial<CreateArticleRequest> {}
+// export interface UpdateArticleRequest extends Partial<CreateArticleRequest> {}
 
 export interface PaginationParams {
   page?: number;

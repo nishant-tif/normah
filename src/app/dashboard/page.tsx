@@ -1,31 +1,10 @@
 "use client";
 
 import React, { useEffect } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Chip,
-  LinearProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import Layout from "@/components/layout/Layout";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { fetchDashboardData } from "@/store/slices/dashboardSlice";
-import WarningIcon from "@mui/icons-material/Warning";
-import DescriptionIcon from "@mui/icons-material/Description";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import riskAssessment from "@/config/Dashboard-risk.json";
-import Image from "next/image";
-import { summaryCards } from "@/config/SummaryCard";
 import HealthScoreCard from "@/components/UI/HealthScoreCard";
 import RiskAssessment from "@/components/UI/RiskAssessment";
 import AISystemRegistry from "@/components/UI/AISystemRegistry";

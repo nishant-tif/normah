@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { BlogPost } from "@/types/blog";
 import styles from "./BlogTable.module.css";
+import Image from "next/image";
 
 interface BlogTableProps {
   blogs: BlogPost[];
@@ -80,7 +81,7 @@ export const BlogTable: React.FC<BlogTableProps> = ({
               <tr key={blog.post_id || blog.id}>
                 <td className={styles.thumbnailCell}>
                   {blog.thumbnail_url ? (
-                    <img
+                    <Image
                       src={blog.thumbnail_url}
                       alt={blog.post_title}
                       className={styles.thumbnail}

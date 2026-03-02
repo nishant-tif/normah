@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Grid from "@mui/material/Grid";
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   TextField,
@@ -19,12 +19,12 @@ import {
   MenuItem,
   TablePagination,
   CircularProgress,
-  Stack,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material";
+
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Layout from "@/components/layout/Layout";
 
@@ -187,7 +187,7 @@ const AuthorPage = () => {
   };
 
   return (
-    <Layout>
+    <Layout title="Article Authors">
       <Box sx={{ p: 4, backgroundColor: "#f6f6f6", minHeight: "100vh" }}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
           Article Author
@@ -195,7 +195,8 @@ const AuthorPage = () => {
 
         <Grid spacing={3} sx={{ display: "flex", gap: 4 }}>
           {/* ADD AUTHOR FORM */}
-          <Grid item xs={12} md={4} sx={{ width: "30%" }}>
+
+          <Grid sx={{ width: "30%" }}>
             <Paper sx={{ p: 3, borderRadius: 2 }}>
               <Typography variant="h6" sx={{ mb: 3 }}>
                 Add Author
@@ -239,7 +240,7 @@ const AuthorPage = () => {
           </Grid>
 
           {/* AUTHOR TABLE */}
-          <Grid item xs={12} md={8} sx={{ width: "70%" }}>
+          <Grid sx={{ width: "70%" }}>
             <Paper sx={{ p: 2, borderRadius: 2 }}>
               <TextField
                 fullWidth

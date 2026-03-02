@@ -85,7 +85,7 @@ export interface CreateBlogRequest {
   country_id?: string;
 }
 
-export interface UpdateBlogRequest extends Partial<CreateBlogRequest> {}
+// export interface UpdateBlogRequest extends Partial<CreateBlogRequest> {}
 
 export interface PaginationParams {
   page?: number;

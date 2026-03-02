@@ -38,7 +38,7 @@ export const fetchAuthors = createAsyncThunk(
       // response.data.data.data = { count, rows }
 
       return response.data.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -53,7 +53,7 @@ export const createAuthor = createAsyncThunk(
     try {
       const response = await apiClient.post(API_ENDPOINTS.AUTHORS, author);
       return response.data.data.author;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -74,7 +74,7 @@ export const updateAuthor = createAsyncThunk(
         author,
       );
       return response.data.data.author;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -89,7 +89,7 @@ export const deleteAuthor = createAsyncThunk(
     try {
       await apiClient.delete(API_ENDPOINTS.AUTHOR_BY_ID(id));
       return id;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -114,23 +114,23 @@ const authorSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchAuthors.fulfilled, (state, action: any) => {
+      .addCase(fetchAuthors.fulfilled, (state, action: unknown) => {
         state.loading = false;
         state.authors = action.payload.rows || [];
         state.total = action.payload.count || 0;
       })
-      .addCase(fetchAuthors.rejected, (state, action: any) => {
+      .addCase(fetchAuthors.rejected, (state, action: unknown) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       // CREATE
-      .addCase(createAuthor.fulfilled, (state, action: any) => {
+      .addCase(createAuthor.fulfilled, (state, action: unknown) => {
         state.authors.unshift(action.payload);
       })
 
       // UPDATE
-      .addCase(updateAuthor.fulfilled, (state, action: any) => {
+      .addCase(updateAuthor.fulfilled, (state, action: unknown) => {
         const index = state.authors.findIndex(
           (a) => a.author_id === action.payload.author_id,
         );
@@ -140,7 +140,7 @@ const authorSlice = createSlice({
       })
 
       // DELETE
-      .addCase(deleteAuthor.fulfilled, (state, action: any) => {
+      .addCase(deleteAuthor.fulfilled, (state, action: unknown) => {
         state.authors = state.authors.filter(
           (a) => a.author_id !== action.payload,
         );

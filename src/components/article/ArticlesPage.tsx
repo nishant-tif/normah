@@ -27,8 +27,13 @@ import { ArticleTable } from "@/components/article/ArticleTable";
 import ArticleFormMUI from "@/components/article/ArticleFormMUI";
 import Layout from "../layout/Layout";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 
+export interface ArticleFormProps {
+  article: Article | null;
+  onSubmit: (formData: Omit<Article, "article_id">) => Promise<void>;
+  onCancel: () => void;
+  loading: boolean;
+}
 export const ArticlesPage: React.FC = () => {
   const navigate = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -39,11 +44,6 @@ export const ArticlesPage: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const handleOpenDialog = () => {
-    dispatch(setSelectedArticle(null));
-    setOpenDialog(true);
-  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -59,19 +59,22 @@ export const ArticlesPage: React.FC = () => {
     await dispatch(deleteArticle(articleId));
   };
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: unknown) => {
     setFormLoading(true);
 
     try {
       if (selectedArticle) {
         await dispatch(
           updateArticle({
-            id: selectedArticle.id,
-            article: formData,
+            // eslint-disable-next-line
+            id: selectedArticle?.id!,
+            // eslint-disable-next-line
+            article: formData!,
           }),
         );
       } else {
-        await dispatch(createArticle(formData));
+        // eslint-disable-next-line
+        await dispatch(createArticle(formData as Omit<Article, "id">));
       }
 
       handleCloseDialog();
@@ -79,7 +82,6 @@ export const ArticlesPage: React.FC = () => {
       dispatch(
         fetchArticles({
           page: 1,
-          limit,
           search: searchQuery,
         }),
       );
@@ -92,7 +94,6 @@ export const ArticlesPage: React.FC = () => {
     dispatch(
       fetchArticles({
         page,
-        limit,
         search: searchQuery,
       }),
     );
@@ -101,7 +102,6 @@ export const ArticlesPage: React.FC = () => {
     dispatch(
       fetchArticles({
         page: newPage,
-        limit: newPageSize,
         search: searchQuery,
       }),
     );
@@ -112,7 +112,6 @@ export const ArticlesPage: React.FC = () => {
     dispatch(
       fetchArticles({
         page: 1,
-        limit,
         search: query,
       }),
     );
@@ -121,7 +120,7 @@ export const ArticlesPage: React.FC = () => {
     navigate.push("/articles/new");
   };
   return (
-    <Layout>
+    <Layout title="">
       <Paper
         elevation={0}
         sx={{ p: 4, borderRadius: 2, backgroundColor: "#fff" }}
@@ -212,9 +211,9 @@ export const ArticlesPage: React.FC = () => {
         <Box sx={{ p: 2 }}>
           <ArticleFormMUI
             article={selectedArticle}
-            onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
             onCancel={handleCloseDialog}
-            loading={formLoading}
+            // loading={formLoading}
           />
         </Box>
       </Dialog>

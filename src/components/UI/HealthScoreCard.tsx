@@ -2,9 +2,6 @@ import { Box, ListItemIcon } from "@mui/material";
 import React from "react";
 import Image from "next/image";
 import { Card, CardContent, Typography, Button } from "@mui/material";
-import DescriptionIcon from "@mui/icons-material/Description";
-import WarningIcon from "@mui/icons-material/Warning";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { summaryCards } from "../../config/SummaryCard";
 
 const HealthScoreCard = () => {
@@ -64,8 +61,6 @@ const HealthScoreCard = () => {
         </Box>
         <Box sx={{ display: "flex", gap: 2 }}>
           {summaryCards.map((card) => {
-            const Icon = card.icon;
-
             return (
               <Box
                 key={card.key}

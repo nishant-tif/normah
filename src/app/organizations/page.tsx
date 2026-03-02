@@ -139,7 +139,7 @@ const OrganizationsPage: React.FC = () => {
                         <IconButton
                           size="small"
                           onClick={() =>
-                            handleDelete(organization.organization_id)
+                            handleDelete(organization?.organization_id)
                           }
                           sx={{ color: "#666" }}
                         >

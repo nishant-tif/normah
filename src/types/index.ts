@@ -3,6 +3,7 @@
 export interface LoginCredentials {
   user_email: string;
   user_password: string;
+  cookies?: object;
 }
 
 export interface LoginResponse {
@@ -16,7 +17,7 @@ export interface LoginResponse {
 }
 
 export interface Policy {
-  policy_id: string | null | undefined;
+  policy_id: string;
   id: string;
   policyName: string;
   metricName: string;
@@ -40,6 +41,7 @@ export interface Model {
 }
 
 export interface Organization {
+  organization_id: string;
   id: string;
   name: string;
   organizationsName: string;
@@ -85,4 +87,31 @@ export interface DashboardData {
     compliance: number;
     status: string;
   }>;
+}
+
+export interface Category {
+  id?: string; // optional fallback
+  category_id: string; // main backend id
+  category_name: string;
+  created_at?: string;
+  updated_at?: string;
+}
+export interface Country {
+  id?: string;
+  country_id: string;
+  countryName: string;
+  countryCode?: string;
+  created_at?: string;
+}
+export interface State {
+  id?: string;
+  state_id: string;
+  stateName: string;
+  country_id: string;
+}
+export interface City {
+  id?: string;
+  city_id: string;
+  cityName: string;
+  state_id: string;
 }

@@ -72,7 +72,7 @@ export const CategoryManagementModal: React.FC<
     setCategoryName("");
   };
 
-  const handleDeleteCategory = async (categoryId: number) => {
+  const handleDeleteCategory = async (categoryId: string) => {
     await dispatch(deleteCategory(categoryId.toString()));
   };
 
@@ -136,7 +136,9 @@ export const CategoryManagementModal: React.FC<
                     <IconButton
                       size="small"
                       color="error"
-                      onClick={() => handleDeleteCategory(category.category_id)}
+                      onClick={() =>
+                        handleDeleteCategory(category?.category_id)
+                      }
                     >
                       <DeleteIcon />
                     </IconButton>

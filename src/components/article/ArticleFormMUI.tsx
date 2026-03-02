@@ -24,118 +24,127 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Article, Category, Country, State, City } from "@/types/article";
-// import articleService from "@/services/articleService";
-import Layout from "@/components/layout/Layout";
 import { createArticle, updateArticle } from "@/store/slices/articleSlice";
 import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "@/utils/toast";
-import { useRouter } from "next/navigation";
-
+import { articleService } from "@/services/dataService";
+import { SelectChangeEvent } from "@mui/material/Select";
 interface ArticleFormProps {
   article?: Article | null;
-  onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
-  loading?: boolean;
 }
 
 export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
   article,
-  // onSubmit,
   onCancel,
-  // loading = false,
 }) => {
-  const navigate = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: RootState) => state.articles);
+
+  const [error, setError] = useState<string>("");
+
   const [formData, setFormData] = useState({
-    article_title: article?.article_title || "",
-    article_slug: article?.article_slug || "",
-    article_excerpt: article?.article_excerpt || "",
-    article_content: article?.article_content || "",
+    article_title: article?.article_title ?? "",
+    article_slug: article?.article_slug ?? "",
+    article_excerpt: article?.article_excerpt ?? "",
+    article_content: article?.article_content ?? "",
     article_visibility:
-      article?.article_visibility || ("DRAFT" as "DRAFT" | "PUBLISHED"),
-    author_id: article?.author_id || 1 || null,
-    article_thumbnail_image: article?.article_thumbnail_image || "",
-    meta_title: article?.meta_title || "",
-    meta_description: article?.meta_description || "",
-    meta_keywords: article?.meta_keywords || "",
-    category_ids: article?.category_ids || [],
-    country_id: article?.country_id || "",
-    state_id: article?.state_id || "",
-    city_id: article?.city_id || "",
+      article?.article_visibility ?? ("DRAFT" as "DRAFT" | "PUBLISHED"),
+    author_id: article?.author_id ?? 1,
+    article_thumbnail_image: article?.article_thumbnail_image ?? "",
+    meta_title: article?.meta_title ?? "",
+    meta_description: article?.meta_description ?? "",
+    meta_keywords: article?.meta_keywords ?? "",
+    category_ids: article?.category_ids ?? [],
+    country_id: article?.country_id ?? "",
+    state_id: article?.state_id ?? "",
+    city_id: article?.city_id ?? "",
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  const [error, setError] = useState<string>("");
 
-  const dispatch = useDispatch<AppDispatch>();
-
-  const { loading } = useSelector((state: RootState) => state.articles);
-
+  /* ================= INITIAL LOAD ================= */
   useEffect(() => {
-    loadInitialData();
+    const init = async () => {
+      try {
+        const [cats, countryList] = await Promise.all([
+          articleService.getCategories(),
+          articleService.getCountries(),
+        ]);
+        setCategories(cats);
+        setCountries(countryList);
+      } catch {
+        setError("Failed to load initial data");
+      }
+    };
+
+    init();
   }, []);
 
+  /* ================= COUNTRY CHANGE ================= */
   useEffect(() => {
-    if (formData.country_id) {
-      loadStates(formData.country_id);
-    }
+    if (!formData.country_id) return;
+
+    const fetchStates = async () => {
+      try {
+        const stateList = await articleService.getStates(formData.country_id);
+        setStates(stateList);
+        setCities([]);
+        setFormData((prev) => ({
+          ...prev,
+          state_id: "",
+          city_id: "",
+        }));
+      } catch {
+        setError("Failed to load states");
+      }
+    };
+
+    fetchStates();
   }, [formData.country_id]);
 
+  /* ================= STATE CHANGE ================= */
   useEffect(() => {
-    if (formData.state_id) {
-      loadCities(formData.state_id);
-    }
+    if (!formData.state_id) return;
+
+    const fetchCities = async () => {
+      try {
+        const cityList = await articleService.getCities(formData.state_id);
+        setCities(cityList);
+        setFormData((prev) => ({
+          ...prev,
+          city_id: "",
+        }));
+      } catch {
+        setError("Failed to load cities");
+      }
+    };
+
+    fetchCities();
   }, [formData.state_id]);
 
-  const loadInitialData = async () => {
-    try {
-      const [cats, countries] = await Promise.all([
-        articleService.getCategories(),
-        articleService.getCountries(),
-      ]);
-      setCategories(cats);
-      setCountries(countries);
-    } catch (err) {
-      setError("Failed to load initial data");
-    }
-  };
-
-  const loadStates = async (countryId: string) => {
-    try {
-      const states = await articleService.getStates(countryId);
-      setStates(states);
-      setFormData((prev) => ({ ...prev, state_id: "", city_id: "" }));
-      setCities([]);
-    } catch (err) {
-      setError("Failed to load states");
-    }
-  };
-
-  const loadCities = async (stateId: string) => {
-    try {
-      const cities = await articleService.getCities(stateId);
-      setCities(cities);
-      setFormData((prev) => ({ ...prev, city_id: "" }));
-    } catch (err) {
-      setError("Failed to load cities");
-    }
-  };
-
+  /* ================= INPUT CHANGE ================= */
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }
-    >,
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent,
   ) => {
-    const { name, value } = e.target as any;
+    const { name, value } = e.target as {
+      name: keyof typeof formData;
+      value: string;
+    };
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  /* ================= CATEGORY ================= */
   const handleCategoryToggle = (categoryId: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -145,6 +154,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
     }));
   };
 
+  /* ================= SLUG ================= */
   const generateSlug = () => {
     const slug = formData.article_title
       .toLowerCase()
@@ -158,6 +168,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
     }));
   };
 
+  /* ================= SUBMIT ================= */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -175,7 +186,8 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
       if (article) {
         await dispatch(
           updateArticle({
-            id: article.article_id,
+            // eslint-disable-next-line
+            id: article?.article_id!,
             article: formData,
           }),
         ).unwrap();
@@ -183,12 +195,14 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
         await dispatch(createArticle(formData)).unwrap();
       }
 
-      onCancel(); // close modal
-    } catch (err: any) {
-      setError(err || "Failed to save article");
+      toast.success("Article saved successfully");
+      onCancel();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save article");
     }
   };
 
+  /* ================= FILE ================= */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -233,7 +247,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
               spacing={2}
               sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
-              <Grid item xs={12}>
+              <Grid>
                 <TextField
                   fullWidth
                   label="Title"
@@ -246,7 +260,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={12} sm={8}>
+              <Grid>
                 <TextField
                   fullWidth
                   label="Slug"
@@ -259,7 +273,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid>
                 <Button
                   variant="outlined"
                   onClick={generateSlug}
@@ -285,7 +299,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 </Grid> */}
 
               {/* ================= THUMBNAIL (UPDATED DESIGN) ================= */}
-              <Grid item xs={12}>
+              <Grid>
                 <Typography sx={{ fontWeight: 600, mb: 1 }}>
                   Thumbnail Image *
                 </Typography>
@@ -386,7 +400,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
               spacing={2}
               sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
-              <Grid item xs={12}>
+              <Grid>
                 <TextField
                   fullWidth
                   label="Meta Title"
@@ -400,7 +414,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid>
                 <TextField
                   fullWidth
                   label="Meta Description"
@@ -416,7 +430,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid>
                 <TextField
                   fullWidth
                   label="Meta Keywords"
@@ -443,13 +457,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
             <FormGroup>
               <Grid container spacing={1}>
                 {categories.map((category) => (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    key={category.category_id || category.id}
-                  >
+                  <Grid key={category.category_id || category.id}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -481,7 +489,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
             <Divider sx={{ mb: 2 }} />
 
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Country</InputLabel>
                   <Select
@@ -505,7 +513,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -533,7 +541,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -563,7 +571,7 @@ export const ArticleFormMUI: React.FC<ArticleFormProps> = ({
             </Grid>
           </CardContent>
         </Card>
-        <Grid item xs={12} sx={{ backgroundColor: "#fff" }}>
+        <Grid sx={{ backgroundColor: "#fff" }}>
           <TextField
             fullWidth
             label="Content"

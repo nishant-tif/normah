@@ -4,7 +4,7 @@ import riskAssessment from "@/config/Dashboard-risk.json";
 import { useAppSelector } from "@/store";
 
 const RiskAssessment = () => {
-  const { data, loading } = useAppSelector((state) => state.dashboard);
+  const { data } = useAppSelector((state) => state.dashboard);
   return (
     <Box
       sx={{
@@ -56,7 +56,7 @@ const RiskAssessment = () => {
                     </Box>
                     <Typography
                       color="#333"
-                      size="small"
+                      variant="body2"
                       sx={{ fontWeight: 600 }}
                     >
                       {data?.riskAssessment?.critical?.count}

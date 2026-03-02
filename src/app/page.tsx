@@ -3,15 +3,12 @@
 import { Button, TextField, Typography, Box, Paper } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { useAppDispatch } from "@/store";
 import { authService } from "@/services/dataService";
 import Image from "next/image";
-import data from "@/config/Data.json";
 import { toast } from "react-toastify";
 
 export default function Home() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const [user_email, setUser_email] = useState("");
   const [user_password, setUser_password] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
@@ -57,9 +54,11 @@ export default function Home() {
     return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout));
       if (emailRef.current) {
+        // eslint-disable-next-line
         emailRef.current.removeEventListener("input", handleInput);
       }
       if (passwordRef.current) {
+        // eslint-disable-next-line
         passwordRef.current.removeEventListener("input", handleInput);
       }
     };
@@ -68,14 +67,18 @@ export default function Home() {
     event.preventDefault();
     try {
       const response = await authService.login({ user_email, user_password });
-      console.log("response", response);
       if (typeof window !== "undefined") {
         localStorage.setItem("auth_token", response.token);
       }
       toast.success(response.message || "Login successful!");
       router.push("/dashboard");
-    } catch (error) {
-      alert("Login failed. Please check your credentials.");
+    } catch (error: unknown) {
+      toast.error(
+        // eslint-disable-next-line
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please try again.",
+      );
     }
   };
 

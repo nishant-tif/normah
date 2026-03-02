@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -25,65 +25,88 @@ import {
 } from "@/store/slices/policiesSlice";
 import type { Policy } from "@/types";
 
+/* =====================================
+   EMPTY FORM (OUTSIDE COMPONENT)
+===================================== */
+const emptyForm: Omit<Policy, "id"> = {
+  policyName: "",
+  policy_id: "",
+  metricName: "Accuracy",
+  operator: ">=",
+  expectedValue: "",
+  severity: "High",
+  description: "",
+};
+
 const AddPolicyModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedPolicy } = useAppSelector((state) => state.policies);
+
   const isOpen = activeModal === "addPolicy";
 
-  const [formData, setFormData] = useState<Omit<Policy, "id">>({
-    policyName: "",
-    metricName: "Accuracy",
-    operator: ">=",
-    expectedValue: "",
-    severity: "High",
-    description: "",
-  });
+  /* =====================================
+     LOCAL STATE
+  ===================================== */
+  const [formData, setFormData] = useState<Omit<Policy, "id">>(emptyForm);
 
-  useEffect(() => {
-    if (selectedPolicy && isOpen) {
+  /* =====================================
+     RESET FORM SAFELY WHEN DIALOG OPENS
+  ===================================== */
+  const handleDialogEnter = () => {
+    if (selectedPolicy) {
       setFormData({
-        policyName: selectedPolicy.policyName,
-        metricName: selectedPolicy.metricName,
-        operator: selectedPolicy.operator,
-        expectedValue: selectedPolicy.expectedValue,
-        severity: selectedPolicy.severity,
-        description: selectedPolicy.description,
+        policyName: selectedPolicy.policyName ?? "",
+        policy_id: selectedPolicy.policy_id ?? "",
+        metricName: selectedPolicy.metricName ?? "Accuracy",
+        operator: selectedPolicy.operator ?? ">=",
+        expectedValue: selectedPolicy.expectedValue ?? "",
+        severity: selectedPolicy.severity ?? "High",
+        description: selectedPolicy.description ?? "",
       });
     } else {
-      setFormData({
-        policyName: "",
-        metricName: "Accuracy",
-        operator: ">=",
-        expectedValue: "",
-        severity: "High",
-        description: "",
-      });
+      setFormData(emptyForm);
     }
-  }, [selectedPolicy, isOpen]);
+  };
 
+  /* =====================================
+     CLOSE HANDLER
+  ===================================== */
   const handleClose = () => {
     dispatch(closeModal());
     dispatch(setSelectedPolicy(null));
+    setFormData(emptyForm);
   };
 
+  /* =====================================
+     SUBMIT HANDLER
+  ===================================== */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       if (selectedPolicy) {
-        console.log("selectedPolicy", selectedPolicy);
         await dispatch(
-          updatePolicy({ id: selectedPolicy.policy_id, policy: formData }),
+          updatePolicy({
+            id: selectedPolicy.policy_id,
+            policy: formData,
+          }),
         ).unwrap();
       } else {
         await dispatch(createPolicy(formData)).unwrap();
       }
+
       handleClose();
-    } catch (error) {
-      console.error("Error saving policy:", error);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error saving policy:", err.message);
+      }
     }
   };
 
+  /* =====================================
+     CHANGE HANDLER (SAFE UPDATE)
+  ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
     (
@@ -91,18 +114,20 @@ const AddPolicyModal: React.FC = () => {
         | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | { target: { value: unknown } },
     ) => {
-      setFormData({ ...formData, [field]: e.target.value });
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
     };
 
   return (
     <Dialog
       open={isOpen}
       onClose={handleClose}
+      // onEnter={handleDialogEnter} // ✅ SAFE RESET HERE
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: 2 },
-      }}
+      PaperProps={{ sx: { borderRadius: 2 } }}
     >
       <DialogTitle
         sx={{
@@ -115,6 +140,7 @@ const AddPolicyModal: React.FC = () => {
         <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
           {selectedPolicy ? "Edit Policy" : "Add New Policy"}
         </Box>
+
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>
@@ -136,7 +162,10 @@ const AddPolicyModal: React.FC = () => {
               <Select
                 value={formData.metricName}
                 onChange={(e) =>
-                  setFormData({ ...formData, metricName: e.target.value })
+                  setFormData((prev) => ({
+                    ...prev,
+                    metricName: e.target.value as string,
+                  }))
                 }
                 label="Metric Name"
               >
@@ -150,7 +179,10 @@ const AddPolicyModal: React.FC = () => {
               <Select
                 value={formData.operator}
                 onChange={(e) =>
-                  setFormData({ ...formData, operator: e.target.value })
+                  setFormData((prev) => ({
+                    ...prev,
+                    operator: e.target.value as string,
+                  }))
                 }
                 label="Operator"
               >
@@ -192,15 +224,14 @@ const AddPolicyModal: React.FC = () => {
           <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
+
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: "#000000",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
+              backgroundColor: "#000",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#333" },
             }}
           >
             Save

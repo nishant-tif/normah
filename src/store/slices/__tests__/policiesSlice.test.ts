@@ -1,11 +1,8 @@
 import policiesReducer, {
   fetchPolicies,
   createPolicy,
-  updatePolicy,
-  deletePolicy,
   setSelectedPolicy,
 } from "../policiesSlice";
-import { policyService } from "@/services/dataService";
 import type { Policy } from "@/types";
 
 jest.mock("@/services/dummyData");

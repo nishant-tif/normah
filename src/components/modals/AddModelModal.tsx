@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -25,70 +25,92 @@ import {
 } from "@/store/slices/modelsSlice";
 import type { Model } from "@/types";
 
+/* =====================================
+   EMPTY FORM (OUTSIDE COMPONENT)
+===================================== */
+const emptyForm: Omit<Model, "id"> = {
+  model_id: "",
+  name: "",
+  version: "",
+  owner: "",
+  organizations: "",
+  framework: "",
+  riskCategory: "High",
+  artifactLocation: "",
+  policy: "",
+};
+
 const AddModelModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedModel } = useAppSelector((state) => state.models);
+
   const isOpen = activeModal === "addModel";
 
-  const [formData, setFormData] = useState<Omit<Model, "id">>({
-    name: "",
-    version: "",
-    owner: "",
-    organizations: "",
-    framework: "",
-    riskCategory: "High",
-    artifactLocation: "",
-    policy: "",
-  });
+  /* =====================================
+     LOCAL STATE
+  ===================================== */
+  const [formData, setFormData] = useState<Omit<Model, "id">>(emptyForm);
 
-  useEffect(() => {
-    if (selectedModel && isOpen) {
+  /* =====================================
+     RESET FORM SAFELY ON OPEN
+  ===================================== */
+  const handleDialogEnter = () => {
+    if (selectedModel) {
       setFormData({
-        name: selectedModel.name,
-        version: selectedModel.version,
-        owner: selectedModel.owner,
-        organizations: selectedModel.organizations,
-        framework: selectedModel.framework,
-        riskCategory: selectedModel.riskCategory,
-        artifactLocation: selectedModel.artifactLocation,
-        policy: selectedModel.policy,
+        model_id: selectedModel.model_id,
+        name: selectedModel.name ?? "",
+        version: selectedModel.version ?? "",
+        owner: selectedModel.owner ?? "",
+        organizations: selectedModel.organizations ?? "",
+        framework: selectedModel.framework ?? "",
+        riskCategory: selectedModel.riskCategory ?? "High",
+        artifactLocation: selectedModel.artifactLocation ?? "",
+        policy: selectedModel.policy ?? "",
       });
     } else {
-      setFormData({
-        name: "",
-        version: "",
-        owner: "",
-        organizations: "",
-        framework: "",
-        riskCategory: "High",
-        artifactLocation: "",
-        policy: "",
-      });
+      setFormData(emptyForm);
     }
-  }, [selectedModel, isOpen]);
+  };
 
+  /* =====================================
+     CLOSE HANDLER
+  ===================================== */
   const handleClose = () => {
     dispatch(closeModal());
     dispatch(setSelectedModel(null));
+    setFormData(emptyForm);
   };
 
+  /* =====================================
+     SUBMIT HANDLER
+  ===================================== */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       if (selectedModel) {
         await dispatch(
-          updateModel({ id: selectedModel.model_id, model: formData }),
+          updateModel({
+            id: selectedModel.model_id,
+            model: formData,
+          }),
         ).unwrap();
       } else {
         await dispatch(createModel(formData)).unwrap();
       }
+
       handleClose();
-    } catch (error) {
-      console.error("Error saving model:", error);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error saving model:", err.message);
+      }
     }
   };
 
+  /* =====================================
+     CHANGE HANDLER (SAFE UPDATE)
+  ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
     (
@@ -96,18 +118,20 @@ const AddModelModal: React.FC = () => {
         | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | { target: { value: unknown } },
     ) => {
-      setFormData({ ...formData, [field]: e.target.value });
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
     };
 
   return (
     <Dialog
       open={isOpen}
       onClose={handleClose}
+      // onEnter={handleDialogEnter} // ✅ SAFE RESET HERE
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: 2 },
-      }}
+      PaperProps={{ sx: { borderRadius: 2 } }}
     >
       <DialogTitle
         sx={{
@@ -120,6 +144,7 @@ const AddModelModal: React.FC = () => {
         <Box sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
           {selectedModel ? "Edit Model" : "Add New Model"}
         </Box>
+
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>
@@ -173,10 +198,10 @@ const AddModelModal: React.FC = () => {
               <Select
                 value={formData.riskCategory}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
+                  setFormData((prev) => ({
+                    ...prev,
                     riskCategory: e.target.value as Model["riskCategory"],
-                  })
+                  }))
                 }
                 label="Risk Category"
               >
@@ -209,15 +234,14 @@ const AddModelModal: React.FC = () => {
           <Button onClick={handleClose} sx={{ color: "#666" }}>
             Cancel
           </Button>
+
           <Button
             type="submit"
             variant="contained"
             sx={{
-              backgroundColor: "#000000",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
+              backgroundColor: "#000",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#333" },
             }}
           >
             Save

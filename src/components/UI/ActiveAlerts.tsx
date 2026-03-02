@@ -4,7 +4,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { useAppSelector } from "@/store";
 
 const ActiveAlerts = () => {
-  const { data, loading } = useAppSelector((state) => state.dashboard);
+  const { data } = useAppSelector((state) => state.dashboard);
   return (
     <Box
       sx={{
@@ -24,7 +24,7 @@ const ActiveAlerts = () => {
             Active Alerts
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-            {data.activeAlerts.map((alert) => (
+            {(data?.activeAlerts ?? []).map((alert) => (
               <Box
                 key={alert.id}
                 sx={{

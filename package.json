@@ -22,6 +22,12 @@
     "react-dom": "19.2.3",
     "react-redux": "^9.2.0"
   },
+  "lint-staged": {
+  "*.{js,jsx,ts,tsx}": [
+    "eslint --fix",
+    "prettier --write"
+  ]
+},
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
@@ -40,4 +46,5 @@
     "ts-jest": "^29.4.6",
     "typescript": "^5"
   }
+  
 }

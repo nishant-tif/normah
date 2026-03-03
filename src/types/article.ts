@@ -42,7 +42,7 @@ export interface Country {
 }
 
 export interface Article {
-  id?: string;
+  id: string;
   article_id?: string | undefined;
   article_title: string;
   article_slug: string;

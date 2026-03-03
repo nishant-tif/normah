@@ -29,18 +29,20 @@ A comprehensive AI governance dashboard built with Next.js, TypeScript, Material
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm, yarn, or pnpm
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd normah
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -50,16 +52,19 @@ pnpm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 ```
 
 Edit `.env.local` and update the API base URL:
+
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://api.normah.ai
+NEXT_PUBLIC_API_URL=https://api.normah.ai
 ```
 
 4. Run the development server:
+
 ```bash
 npm run dev
 # or
@@ -118,7 +123,7 @@ Edit `src/config/api.ts` and update the `baseURL`:
 
 ```typescript
 export const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://your-api-url.com',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com",
   // ...
 };
 ```
@@ -126,7 +131,7 @@ export const API_CONFIG = {
 Or set it in your `.env.local` file:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://your-api-url.com
+NEXT_PUBLIC_API_URL=https://your-api-url.com
 ```
 
 ### Step 2: Replace Dummy Services
@@ -178,11 +183,13 @@ npm run test:watch
 ## Building for Production
 
 1. Build the application:
+
 ```bash
 npm run build
 ```
 
 2. Start the production server:
+
 ```bash
 npm start
 ```
@@ -203,6 +210,7 @@ npm start
 ## Responsive Design
 
 The application is fully responsive with breakpoints:
+
 - **Mobile**: < 768px (xs)
 - **Tablet**: 768px - 1024px (md)
 - **Desktop**: > 1024px (lg)

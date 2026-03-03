@@ -1,14 +1,14 @@
 {
-    "logo" : "../../public/assets/normah-logo.png",
-    "Mask-group" : "../../public/assets/Mask-group.png",
-    "description" : "Normah is a platform for AI governance",
-    "version" : "1.0.0",
-    "author" : "Normah",
-    "author_email" : "info@normah.ai",
-    "author_url" : "https://normah.ai",
-    "author_twitter" : "https://twitter.com/normah",
-    "author_github" : "https://github.com/normah",
-    "author_linkedin" : "https://linkedin.com/in/normah",
-    "author_facebook" : "https://facebook.com/normah",
-    "author_instagram" : "https://instagram.com/normah"
+  "logo": "../../public/assets/normah-logo.png",
+  "Mask-group": "../../public/assets/Mask-group.png",
+  "description": "Normah is a platform for AI governance",
+  "version": "1.0.0",
+  "author": "Normah",
+  "author_email": "info@normah.ai",
+  "author_url": "https://normah.ai",
+  "author_twitter": "https://twitter.com/normah",
+  "author_github": "https://github.com/normah",
+  "author_linkedin": "https://linkedin.com/in/normah",
+  "author_facebook": "https://facebook.com/normah",
+  "author_instagram": "https://instagram.com/normah"
 }

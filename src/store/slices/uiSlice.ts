@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type ModalType = 'addPolicy' | 'addOrganization' | 'addModel' | null;
+export type ModalType = "addPolicy" | "addOrganization" | "addModel" | null;
 
 interface UiState {
   activeModal: ModalType;
@@ -11,7 +11,7 @@ const initialState: UiState = {
 };
 
 const uiSlice = createSlice({
-  name: 'ui',
+  name: "ui",
   initialState,
   reducers: {
     openModal(state, action: PayloadAction<ModalType>) {
@@ -26,4 +26,3 @@ const uiSlice = createSlice({
 export const { openModal, closeModal } = uiSlice.actions;
 
 export default uiSlice.reducer;
-

@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { Geist } from "next/font/google";
-import { AddPolicyModal, AddModelModal, AddOrganizationModal } from "@/components/modals";
+import {
+  AddPolicyModal,
+  AddModelModal,
+  AddOrganizationModal,
+} from "@/components/modals";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +33,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: "none",
           borderRadius: 8,
         },
       },

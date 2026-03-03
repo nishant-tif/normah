@@ -54,11 +54,9 @@ export default function Home() {
     return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout));
       if (emailRef.current) {
-        // eslint-disable-next-line
         emailRef.current.removeEventListener("input", handleInput);
       }
       if (passwordRef.current) {
-        // eslint-disable-next-line
         passwordRef.current.removeEventListener("input", handleInput);
       }
     };
@@ -74,7 +72,6 @@ export default function Home() {
       router.push("/dashboard");
     } catch (error: unknown) {
       toast.error(
-        // eslint-disable-next-line
         error instanceof Error
           ? error.message
           : "Login failed. Please try again.",

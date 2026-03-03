@@ -50,24 +50,7 @@ const AddPolicyModal: React.FC = () => {
   ===================================== */
   const [formData, setFormData] = useState<Omit<Policy, "id">>(emptyForm);
 
-  /* =====================================
-     RESET FORM SAFELY WHEN DIALOG OPENS
-  ===================================== */
-  const handleDialogEnter = () => {
-    if (selectedPolicy) {
-      setFormData({
-        policyName: selectedPolicy.policyName ?? "",
-        policy_id: selectedPolicy.policy_id ?? "",
-        metricName: selectedPolicy.metricName ?? "Accuracy",
-        operator: selectedPolicy.operator ?? ">=",
-        expectedValue: selectedPolicy.expectedValue ?? "",
-        severity: selectedPolicy.severity ?? "High",
-        description: selectedPolicy.description ?? "",
-      });
-    } else {
-      setFormData(emptyForm);
-    }
-  };
+
 
   /* =====================================
      CLOSE HANDLER
@@ -109,16 +92,16 @@ const AddPolicyModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-    (
-      e:
-        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | { target: { value: unknown } },
-    ) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value as string,
-      }));
-    };
+      (
+        e:
+          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+          | { target: { value: unknown } },
+      ) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value as string,
+        }));
+      };
 
   return (
     <Dialog

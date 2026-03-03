@@ -42,7 +42,6 @@ export const ArticlesPage: React.FC = () => {
     useSelector((state: RootState) => state.articles);
   console.log("limit", limit);
   const [openDialog, setOpenDialog] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCloseDialog = () => {
@@ -98,7 +97,7 @@ export const ArticlesPage: React.FC = () => {
       }),
     );
   }, [dispatch, page, limit, searchQuery, openDialog]);
-  const handlePageChange = (newPage: number, newPageSize: number) => {
+  const handlePageChange = (newPage: number) => {
     dispatch(
       fetchArticles({
         page: newPage,
@@ -213,7 +212,7 @@ export const ArticlesPage: React.FC = () => {
             article={selectedArticle}
             // onSubmit={handleSubmit}
             onCancel={handleCloseDialog}
-            // loading={formLoading}
+          // loading={formLoading}
           />
         </Box>
       </Dialog>

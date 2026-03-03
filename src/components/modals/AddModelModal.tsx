@@ -52,26 +52,7 @@ const AddModelModal: React.FC = () => {
   ===================================== */
   const [formData, setFormData] = useState<Omit<Model, "id">>(emptyForm);
 
-  /* =====================================
-     RESET FORM SAFELY ON OPEN
-  ===================================== */
-  const handleDialogEnter = () => {
-    if (selectedModel) {
-      setFormData({
-        model_id: selectedModel.model_id,
-        name: selectedModel.name ?? "",
-        version: selectedModel.version ?? "",
-        owner: selectedModel.owner ?? "",
-        organizations: selectedModel.organizations ?? "",
-        framework: selectedModel.framework ?? "",
-        riskCategory: selectedModel.riskCategory ?? "High",
-        artifactLocation: selectedModel.artifactLocation ?? "",
-        policy: selectedModel.policy ?? "",
-      });
-    } else {
-      setFormData(emptyForm);
-    }
-  };
+
 
   /* =====================================
      CLOSE HANDLER
@@ -113,16 +94,16 @@ const AddModelModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-    (
-      e:
-        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | { target: { value: unknown } },
-    ) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value as string,
-      }));
-    };
+      (
+        e:
+          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+          | { target: { value: unknown } },
+      ) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value as string,
+        }));
+      };
 
   return (
     <Dialog

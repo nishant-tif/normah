@@ -52,24 +52,7 @@ const AddOrganizationModal: React.FC = () => {
   ===================================== */
   const [formData, setFormData] = useState<Omit<Organization, "id">>(emptyForm);
 
-  /* =====================================
-     HANDLE OPEN (RESET STATE SAFELY)
-  ===================================== */
-  const handleDialogEnter = () => {
-    if (selectedOrganization) {
-      setFormData({
-        name: selectedOrganization.name ?? "",
-        organizationsName: selectedOrganization.organizationsName ?? "",
-        organization_id: selectedOrganization.organization_id ?? "",
-        email: selectedOrganization.email ?? "",
-        address: selectedOrganization.address ?? "",
-        state: selectedOrganization.state ?? "",
-        city: selectedOrganization.city ?? "",
-      });
-    } else {
-      setFormData(emptyForm);
-    }
-  };
+
 
   /* =====================================
      CLOSE HANDLER
@@ -111,16 +94,16 @@ const AddOrganizationModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-    (
-      e:
-        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | { target: { value: unknown } },
-    ) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value as string,
-      }));
-    };
+      (
+        e:
+          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+          | { target: { value: unknown } },
+      ) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: e.target.value as string,
+        }));
+      };
 
   const states = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Punjab"];
   const cities = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Ludhiana"];

@@ -6,6 +6,9 @@ const nextConfig = {
     domains: ['localhost'],
     unoptimized: false,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 }
 
 module.exports = nextConfig

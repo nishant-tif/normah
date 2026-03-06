@@ -60,7 +60,7 @@ cp .env.example .env.local
 Edit `.env.local` and update the API base URL:
 
 ```env
-NEXT_PUBLIC_API_URL=https://api.normah.ai
+NEXT_PUBLIC_API_URL=https://devapi.normah.ai
 ```
 
 4. Run the development server:
@@ -73,7 +73,7 @@ yarn dev
 pnpm dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [https://localhost:3000](https://localhost:3000) in your browser.
 
 ### Default Login Credentials
 

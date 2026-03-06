@@ -16,7 +16,11 @@ const nextConfig: NextConfig = {
         hostname: "images.normah.ai",
         pathname: "/**",
       },
-
+      {
+        protocol: "http",
+        hostname: "devapi.normah.ai",
+        pathname: "/**",
+      },
       {
         protocol: "https",
         hostname: "api.normah.ai",
@@ -25,6 +29,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.normah.ai",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "devapi.normah.ai",
         pathname: "/**",
       },
     ],

@@ -1,6 +1,6 @@
 // API Configuration - Change this baseURL when real API is available
 export const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://api.normah.ai",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://devapi.normah.ai",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

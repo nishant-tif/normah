@@ -43,6 +43,7 @@ export const ArticlesPage: React.FC = () => {
   console.log("limit", limit);
   const [openDialog, setOpenDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [formLoading, setFormLoading] = useState(false);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -212,7 +213,7 @@ export const ArticlesPage: React.FC = () => {
             article={selectedArticle}
             // onSubmit={handleSubmit}
             onCancel={handleCloseDialog}
-          // loading={formLoading}
+            // loading={formLoading}
           />
         </Box>
       </Dialog>

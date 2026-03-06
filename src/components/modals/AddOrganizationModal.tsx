@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -52,7 +52,27 @@ const AddOrganizationModal: React.FC = () => {
   ===================================== */
   const [formData, setFormData] = useState<Omit<Organization, "id">>(emptyForm);
 
-
+  useEffect(() => {
+    if (selectedOrganization && isOpen) {
+      setFormData({
+        name: selectedOrganization.name,
+        organizationsName: selectedOrganization.organizationsName,
+        email: selectedOrganization.email,
+        address: selectedOrganization.address,
+        state: selectedOrganization.state,
+        city: selectedOrganization.city,
+      });
+    } else {
+      setFormData({
+        name: "",
+        organizationsName: "",
+        email: "",
+        address: "",
+        state: "",
+        city: "",
+      });
+    }
+  }, [selectedOrganization, isOpen]);
 
   /* =====================================
      CLOSE HANDLER
@@ -94,16 +114,16 @@ const AddOrganizationModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-      (
-        e:
-          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-          | { target: { value: unknown } },
-      ) => {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: e.target.value as string,
-        }));
-      };
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
+    };
 
   const states = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Punjab"];
   const cities = ["Chandigarh", "Delhi", "Mumbai", "Bangalore", "Ludhiana"];

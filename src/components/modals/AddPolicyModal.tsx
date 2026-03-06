@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -28,20 +28,20 @@ import type { Policy } from "@/types";
 /* =====================================
    EMPTY FORM (OUTSIDE COMPONENT)
 ===================================== */
-const emptyForm: Omit<Policy, "id"> = {
-  policyName: "",
-  policy_id: "",
-  metricName: "Accuracy",
-  operator: ">=",
-  expectedValue: "",
-  severity: "High",
-  description: "",
-};
 
 const AddPolicyModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { activeModal } = useAppSelector((state) => state.ui);
   const { selectedPolicy } = useAppSelector((state) => state.policies);
+  const emptyForm: Omit<Policy, "id"> = {
+    policyName: "",
+    ...(selectedPolicy && { policy_id: selectedPolicy }),
+    metricName: "Accuracy",
+    operator: ">=",
+    expectedValue: "",
+    severity: "High",
+    description: "",
+  };
 
   const isOpen = activeModal === "addPolicy";
 
@@ -49,9 +49,29 @@ const AddPolicyModal: React.FC = () => {
      LOCAL STATE
   ===================================== */
   const [formData, setFormData] = useState<Omit<Policy, "id">>(emptyForm);
-
-
-
+  useEffect(() => {
+    if (selectedPolicy && isOpen) {
+      setFormData({
+        // policy_id: selectedPolicy.policy_id,
+        policyName: selectedPolicy.policyName,
+        metricName: selectedPolicy.metricName,
+        operator: selectedPolicy.operator,
+        expectedValue: selectedPolicy.expectedValue,
+        severity: selectedPolicy.severity,
+        description: selectedPolicy.description,
+      });
+    } else {
+      setFormData({
+        // policy_id: "",
+        policyName: "",
+        metricName: "Accuracy",
+        operator: ">=",
+        expectedValue: "",
+        severity: "High",
+        description: "",
+      });
+    }
+  }, [selectedPolicy, isOpen]);
   /* =====================================
      CLOSE HANDLER
   ===================================== */
@@ -76,6 +96,7 @@ const AddPolicyModal: React.FC = () => {
           }),
         ).unwrap();
       } else {
+        console.log("formData", formData);
         await dispatch(createPolicy(formData)).unwrap();
       }
 
@@ -92,16 +113,16 @@ const AddPolicyModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-      (
-        e:
-          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-          | { target: { value: unknown } },
-      ) => {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: e.target.value as string,
-        }));
-      };
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
+    };
 
   return (
     <Dialog

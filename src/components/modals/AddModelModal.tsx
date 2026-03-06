@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -52,8 +52,31 @@ const AddModelModal: React.FC = () => {
   ===================================== */
   const [formData, setFormData] = useState<Omit<Model, "id">>(emptyForm);
 
-
-
+  useEffect(() => {
+    if (selectedModel && isOpen) {
+      setFormData({
+        name: selectedModel.name,
+        version: selectedModel.version,
+        owner: selectedModel.owner,
+        organizations: selectedModel.organizations,
+        framework: selectedModel.framework,
+        riskCategory: selectedModel.riskCategory,
+        artifactLocation: selectedModel.artifactLocation,
+        policy: selectedModel.policy,
+      });
+    } else {
+      setFormData({
+        name: "",
+        version: "",
+        owner: "",
+        organizations: "",
+        framework: "",
+        riskCategory: "High",
+        artifactLocation: "",
+        policy: "",
+      });
+    }
+  }, [selectedModel, isOpen]);
   /* =====================================
      CLOSE HANDLER
   ===================================== */
@@ -94,16 +117,16 @@ const AddModelModal: React.FC = () => {
   ===================================== */
   const handleChange =
     (field: keyof typeof formData) =>
-      (
-        e:
-          | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-          | { target: { value: unknown } },
-      ) => {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: e.target.value as string,
-        }));
-      };
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | { target: { value: unknown } },
+    ) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value as string,
+      }));
+    };
 
   return (
     <Dialog

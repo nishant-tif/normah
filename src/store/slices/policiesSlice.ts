@@ -32,6 +32,7 @@ export const createPolicy = createAsyncThunk(
   "policies/create",
   async (policy: Omit<Policy, "id">, { rejectWithValue }) => {
     try {
+      console.log("newPolicy", policy);
       const newPolicy = await policyService.create(policy);
       return newPolicy;
     } catch (error) {

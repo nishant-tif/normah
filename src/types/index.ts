@@ -17,7 +17,7 @@ export interface LoginResponse {
 }
 
 export interface Policy {
-  policy_id: string;
+  policy_id?: string | any;
   id: string;
   policyName: string;
   metricName: string;
@@ -28,7 +28,7 @@ export interface Policy {
 }
 
 export interface Model {
-  model_id: string;
+  model_id?: string | any;
   id: string;
   name: string;
   version: string;
@@ -41,7 +41,7 @@ export interface Model {
 }
 
 export interface Organization {
-  organization_id: string;
+  organization_id?: string | any;
   id: string;
   name: string;
   organizationsName: string;

@@ -9,31 +9,38 @@ const HealthScoreCard = () => {
     <Box
       sx={{
         display: "flex",
-        // justifyContent: "flex-start",
+        flexDirection: { xs: "column", md: "row" },
         alignItems: "center",
         mb: 2,
-        p: 3,
+        p: { xs: 2, sm: 2.5, md: 3 },
         borderRadius: 3,
         bgcolor: "#ffffff",
+        gap: { xs: 2, md: 3 },
       }}
     >
+      {/* Logo */}
       <Box
         sx={{
           display: "flex",
-          mr: 2,
+          justifyContent: "center",
+          alignItems: "center",
           bgcolor: "#EBEBEB",
-          py: 9,
-          px: 10,
           borderRadius: 2,
+          px: { xs: 4, sm: 6, md: 8, lg: 10 },
+          py: { xs: 4, sm: 5, md: 7, lg: 9 },
+          width: { xs: "100%", md: "auto" },
         }}
       >
         <Image
           src={"/assets/Normah-logo.png"}
           alt="normah-logo"
-          width={150}
-          height={150}
+          width={100}
+          height={100}
+          style={{ maxWidth: "100%", height: "auto" }}
         />
       </Box>
+
+      {/* Right Section */}
       <Box
         sx={{
           width: "100%",
@@ -42,88 +49,137 @@ const HealthScoreCard = () => {
           gap: 2,
         }}
       >
+        {/* Header */}
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
+            alignItems: { xs: "flex-start", sm: "center" },
+            gap: 1,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: {
+                xs: "15px",
+                sm: "16px",
+                md: "18px",
+                lg: "20px",
+              },
+            }}
+          >
             AI Governance Health Score
           </Typography>
+
           <Button
             variant="contained"
             size="small"
-            sx={{ borderRadius: 2, color: "white", fontWeight: 600 }}
+            sx={{
+              borderRadius: 2,
+              color: "white",
+              fontWeight: 600,
+              fontSize: {
+                xs: "11px",
+                sm: "12px",
+                md: "13px",
+              },
+              px: { xs: 1.5, sm: 2 },
+            }}
           >
             Need Attention
           </Button>
         </Box>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          {summaryCards.map((card) => {
-            return (
-              <Box
-                key={card.key}
+
+        {/* Cards */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+              lg: "repeat(4, 1fr)",
+            },
+            gap: 2,
+          }}
+        >
+          {summaryCards.map((card) => (
+            <Card
+              key={card.key}
+              sx={{
+                borderRadius: 2,
+                bgcolor: "#F8F9FA",
+                height: "100%",
+              }}
+            >
+              <CardContent
                 sx={{
-                  flex: {
-                    xs: "1 1 100%",
-                  },
+                  p: { xs: 1.5, sm: 2 },
                 }}
               >
-                <Card
+                <Box
                   sx={{
-                    height: "100%",
-                    borderRadius: 2,
-                    bgcolor: "#F8F9FA",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    mb: 0.5,
                   }}
                 >
-                  <CardContent>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mb: 1,
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 30,
-                          minHeight: 30,
-                          color: "#333",
-                          bgcolor: "white",
-                          borderRadius: "10px",
-                          p: 0.5,
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          mr: 1,
-                        }}
-                      >
-                        <Image
-                          src={card.icon}
-                          alt={card.title}
-                          width={15}
-                          height={15}
-                        />
-                      </ListItemIcon>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: "bold", fontSize: 15 }}
-                      >
-                        {card.value} {card.title}
-                        {/* {card.suffix} */}
-                      </Typography>
-                    </Box>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: { xs: 26, sm: 30 },
+                      minHeight: { xs: 26, sm: 30 },
+                      bgcolor: "white",
+                      borderRadius: "8px",
+                      p: 0.5,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      src={card.icon}
+                      alt={card.title}
+                      width={14}
+                      height={14}
+                    />
+                  </ListItemIcon>
 
-                    <Typography variant="caption" color="text.secondary">
-                      {card.subtitle}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-            );
-          })}
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: {
+                        xs: "13px",
+                        sm: "14px",
+                        md: "15px",
+                        lg: "16px",
+                      },
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {card.value} {card.title}
+                  </Typography>
+                </Box>
+
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "11px",
+                      md: "12px",
+                      lg: "13px",
+                    },
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {card.subtitle}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
         </Box>
       </Box>
     </Box>

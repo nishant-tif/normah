@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,22 +13,31 @@ import {
   Paper,
   Chip,
   IconButton,
+  TablePagination,
 } from "@mui/material";
+
 import Layout from "@/components/layout/Layout";
 import { AddPolicyModal } from "@/components/modals";
+
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   fetchPolicies,
   setSelectedPolicy,
   deletePolicy,
 } from "@/store/slices/policiesSlice";
+
 import { openModal } from "@/store/slices/uiSlice";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const PolicyPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { policies, loading } = useAppSelector((state) => state.policies);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   useEffect(() => {
     dispatch(fetchPolicies());
   }, [dispatch]);
@@ -62,6 +71,22 @@ const PolicyPage: React.FC = () => {
     }
   };
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedPolicies = policies.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+
   return (
     <Layout
       title="Policy"
@@ -69,6 +94,7 @@ const PolicyPage: React.FC = () => {
       showSearch={true}
     >
       <Box>
+        {/* HEADER */}
         <Box
           sx={{
             display: "flex",
@@ -78,21 +104,21 @@ const PolicyPage: React.FC = () => {
           }}
         >
           <Box />
+
           <Button
             variant="contained"
             onClick={handleAddNew}
             sx={{
-              backgroundColor: "#000000",
+              backgroundColor: "#000",
               color: "white",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
+              "&:hover": { backgroundColor: "#333" },
             }}
           >
             Add New Policy
           </Button>
         </Box>
 
+        {/* TABLE */}
         <TableContainer component={Paper} sx={{ boxShadow: 1 }}>
           <Table>
             <TableHead>
@@ -103,9 +129,12 @@ const PolicyPage: React.FC = () => {
                 <TableCell sx={{ fontWeight: 600 }}>Expected Value</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {loading ? (
                 <TableRow>
@@ -113,27 +142,20 @@ const PolicyPage: React.FC = () => {
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : policies.length === 0 ? (
+              ) : paginatedPolicies.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
                     No policies found
                   </TableCell>
                 </TableRow>
               ) : (
-                policies.map((policy) => (
-                  <TableRow
-                    key={policy.policy_id}
-                    hover
-                    sx={{
-                      "&:nth-of-type(odd)": {
-                        backgroundColor: "#fafafa",
-                      },
-                    }}
-                  >
+                paginatedPolicies.map((policy) => (
+                  <TableRow key={policy.policy_id} hover>
                     <TableCell>{policy.policyName}</TableCell>
                     <TableCell>{policy.metricName}</TableCell>
                     <TableCell>{policy.operator}</TableCell>
                     <TableCell>{policy.expectedValue}</TableCell>
+
                     <TableCell>
                       <Chip
                         label={policy.severity}
@@ -147,30 +169,49 @@ const PolicyPage: React.FC = () => {
                         size="small"
                       />
                     </TableCell>
+
                     <TableCell>{policy.description}</TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", gap: 1 }}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleEdit(policy)}
-                          sx={{ color: "#666" }}
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDelete(policy.policy_id)}
-                          sx={{ color: "#666" }}
-                        >
-                          <MoreVertIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
+
+                    {/* ACTION BUTTONS */}
+                    <TableCell align="right">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEdit(policy)}
+                        sx={{
+                          color: "#1976d2",
+                          "&:hover": { backgroundColor: "#e3f2fd" },
+                        }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDelete(policy.policy_id)}
+                        sx={{
+                          color: "#d32f2f",
+                          "&:hover": { backgroundColor: "#ffebee" },
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
+
+          {/* PAGINATION */}
+          <TablePagination
+            component="div"
+            count={policies.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
         </TableContainer>
 
         <AddPolicyModal />

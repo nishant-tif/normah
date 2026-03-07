@@ -42,8 +42,7 @@ interface ArticleFormProps {
 }
 
 interface Country {
-  id: string;
-  country_id: string;
+  id: string | number;
   countryName: string;
 }
 interface State {
@@ -68,7 +67,7 @@ const AddArticle: React.FC<ArticleFormProps> = ({
   const { countries } = useAppSelector((state) => state.countries);
   const { states } = useAppSelector((state) => state.states);
   const { cities } = useAppSelector((state) => state.cities);
-
+  console.log("countries", countries);
   const [error, setError] = useState<string>("");
 
   const [formData, setFormData] = useState({
@@ -423,33 +422,39 @@ const AddArticle: React.FC<ArticleFormProps> = ({
           <Card sx={{ mb: 3, boxShadow: 1 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                Categories
+                Category
               </Typography>
+
               <Divider sx={{ mb: 2 }} />
 
-              <FormGroup>
-                <Grid container spacing={1}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+
+                <Select
+                  name="category_id"
+                  value={formData.category_ids[0] || ""}
+                  label="Category"
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      category_ids: [e.target.value],
+                    }))
+                  }
+                >
+                  <MenuItem value="">
+                    <em>Select Category</em>
+                  </MenuItem>
+
                   {categories.map((category) => (
-                    <Grid key={category.category_id || category.id}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={formData.category_ids.includes(
-                              category.category_id || category.id || "",
-                            )}
-                            onChange={() =>
-                              handleCategoryToggle(
-                                category.category_id || category.id || "",
-                              )
-                            }
-                          />
-                        }
-                        label={category.category_name}
-                      />
-                    </Grid>
+                    <MenuItem
+                      key={category.category_id || category.id}
+                      value={category.category_id || category.id}
+                    >
+                      {category.category_name}
+                    </MenuItem>
                   ))}
-                </Grid>
-              </FormGroup>
+                </Select>
+              </FormControl>
             </CardContent>
           </Card>
 
@@ -470,16 +475,16 @@ const AddArticle: React.FC<ArticleFormProps> = ({
                       value={formData.country_id}
                       onChange={handleInputChange}
                       label="Country"
+                      sx={{
+                        width: formData.country_id ? "auto" : "7rem",
+                      }}
                     >
                       <MenuItem value="">
                         <em>Select Country</em>
                       </MenuItem>
                       {countries &&
                         countries?.map((country: Country) => (
-                          <MenuItem
-                            key={country?.country_id || country?.id}
-                            value={country?.country_id || country?.id}
-                          >
+                          <MenuItem key={country?.id} value={country?.id}>
                             {country?.countryName}
                           </MenuItem>
                         ))}
@@ -499,6 +504,9 @@ const AddArticle: React.FC<ArticleFormProps> = ({
                       value={formData.state_id}
                       onChange={handleInputChange}
                       label="State"
+                      sx={{
+                        width: formData.state_id ? "auto" : "7rem",
+                      }}
                     >
                       <MenuItem value="">
                         <em>Select State</em>
@@ -527,6 +535,9 @@ const AddArticle: React.FC<ArticleFormProps> = ({
                       value={formData.city_id}
                       onChange={handleInputChange}
                       label="City"
+                      sx={{
+                        width: formData.city_id ? "auto" : "7rem",
+                      }}
                     >
                       <MenuItem value="">
                         <em>Select City</em>

@@ -65,6 +65,7 @@ export default function Home() {
     event.preventDefault();
     try {
       const response = await authService.login({ user_email, user_password });
+
       if (typeof window !== "undefined") {
         localStorage.setItem("auth_token", response.token);
       }
@@ -72,8 +73,8 @@ export default function Home() {
       router.push("/dashboard");
     } catch (error: unknown) {
       toast.error(
-        error instanceof Error
-          ? error.message
+        error instanceof Error && "response" in error
+          ? (error as any).response.data.data.message
           : "Login failed. Please try again.",
       );
     }

@@ -52,9 +52,10 @@ export const fetchCategories = createAsyncThunk<
 
     return response.data.data.data;
   } catch (error: unknown) {
-    return rejectWithValue(
-      error.response?.data?.data?.message || error.message,
-    );
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      (error as any)?.response?.data?.data?.message || message;
+    return rejectWithValue(errorMessage);
   }
 });
 
@@ -68,9 +69,10 @@ export const createCategory = createAsyncThunk<Category, Partial<Category>>(
       const response = await apiClient.post(API_ENDPOINTS.CATEGORIES, data);
       return response.data.data.data;
     } catch (error: unknown) {
-      return rejectWithValue(
-        error.response?.data?.data?.message || error.message,
-      );
+      const message = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        (error as any)?.response?.data?.data?.message || message;
+      return rejectWithValue(errorMessage);
     }
   },
 );
@@ -89,9 +91,10 @@ export const updateCategory = createAsyncThunk<
     );
     return response.data.data.data;
   } catch (error: unknown) {
-    return rejectWithValue(
-      error.response?.data?.data?.message || error.message,
-    );
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      (error as any)?.response?.data?.data?.message || message;
+    return rejectWithValue(errorMessage);
   }
 });
 
@@ -105,9 +108,10 @@ export const deleteCategory = createAsyncThunk<string, string>(
       await apiClient.delete(API_ENDPOINTS.CATEGORY_BY_ID(id));
       return id;
     } catch (error: unknown) {
-      return rejectWithValue(
-        error.response?.data?.data?.message || error.message,
-      );
+      const message = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        (error as any)?.response?.data?.data?.message || message;
+      return rejectWithValue(errorMessage);
     }
   },
 );

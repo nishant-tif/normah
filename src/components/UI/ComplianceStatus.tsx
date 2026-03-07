@@ -15,8 +15,8 @@ const CircularRing = ({ value }: { value: number }) => {
     <Box
       sx={{
         position: "relative",
-        width: 140,
-        height: 140,
+        width: { xs: 110, sm: 120, md: 140 },
+        height: { xs: 110, sm: 120, md: 140 },
         borderRadius: "50%",
         background: `conic-gradient(
           #000 ${value * 3.6}deg,
@@ -30,8 +30,8 @@ const CircularRing = ({ value }: { value: number }) => {
       {/* Inner cutout */}
       <Box
         sx={{
-          width: 110,
-          height: 110,
+          width: { xs: 85, sm: 95, md: 110 },
+          height: { xs: 85, sm: 95, md: 110 },
           borderRadius: "50%",
           backgroundColor: "#fff",
           display: "flex",
@@ -41,7 +41,7 @@ const CircularRing = ({ value }: { value: number }) => {
       >
         <Typography
           sx={{
-            fontSize: 36,
+            fontSize: { xs: 22, sm: 26, md: 36 },
             fontWeight: 600,
             color: "#2f2f46",
           }}
@@ -66,25 +66,40 @@ const ProgressRow = ({
     <Box
       sx={{
         display: "flex",
-        alignItems: "flex-start",
-        mb: 1,
         flexDirection: "column",
+        mb: 1,
       }}
     >
-      {/* Square icon */}
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+        {/* icon */}
         <Box
           sx={{
-            width: 28,
-            height: 28,
+            width: { xs: 22, sm: 26, md: 28 },
+            height: { xs: 22, sm: 26, md: 28 },
             borderRadius: 2,
             backgroundColor: "#5cc5b8",
-            mr: 1.5,
+            mr: 1,
           }}
         />
-        <Typography sx={{ flexGrow: 1, fontSize: 14 }}>{label}</Typography>
+
+        <Typography
+          sx={{
+            fontSize: { xs: 12, sm: 13, md: 14 },
+            flexGrow: 1,
+          }}
+        >
+          {label}
+        </Typography>
       </Box>
-      <Typography sx={{ fontWeight: 600 }}>{value}%</Typography>
+
+      <Typography
+        sx={{
+          fontWeight: 600,
+          fontSize: { xs: 12, sm: 13, md: 14 },
+        }}
+      >
+        {value}%
+      </Typography>
     </Box>
 
     <LinearProgress
@@ -113,8 +128,18 @@ const ComplianceStatus = () => {
       }}
     >
       <Card sx={{ borderRadius: 3 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 600, mb: 2 }}>
+        <CardContent
+          sx={{
+            p: { xs: 2, sm: 2.5, md: 3 },
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 600,
+              mb: 2,
+              fontSize: { xs: 15, sm: 16, md: 18 },
+            }}
+          >
             Compliance Status
           </Typography>
 
@@ -123,7 +148,7 @@ const ComplianceStatus = () => {
             sx={{
               backgroundColor: "#f3f3f3",
               borderRadius: 3,
-              py: 4,
+              py: { xs: 3, md: 4 },
               mb: 3,
               display: "flex",
               justifyContent: "center",
@@ -135,25 +160,32 @@ const ComplianceStatus = () => {
           {/* Bottom rows */}
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 3,
-              justifyContent: "space-between",
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+                md: "1fr 1fr",
+                lg: "1fr 1fr 1fr 1fr",
+              },
+              gap: { xs: 2, md: 3 },
             }}
           >
             <ProgressRow
               label="EU AI Act"
               value={data?.compliance?.euAiAct ?? 0}
             />
+
             <ProgressRow
               label="ISO 42001"
               value={data?.compliance?.iso42001 ?? 0}
             />
+
             <ProgressRow
               label="India DPDP Act"
               value={data?.compliance?.indiaDpdpAct ?? 0}
               danger
             />
+
             <ProgressRow
               label="OECD Principles"
               value={data?.compliance?.oecdPrinciples ?? 0}

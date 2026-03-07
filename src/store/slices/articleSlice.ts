@@ -4,6 +4,7 @@ import type {
   PaginationParams,
   ArticleSearchResponse,
   Article,
+  // ArticleListItem,
 } from "@/types/article";
 
 interface ArticleState {
@@ -106,7 +107,13 @@ const articlesSlice = createSlice({
         fetchArticles.fulfilled,
         (state, action: PayloadAction<ArticleSearchResponse>) => {
           state.loading = false;
-          state.articles = action.payload.data;
+          state.articles = action.payload.data.map((article) => ({
+            ...article,
+            author_id:
+              typeof article.author_id === "string"
+                ? parseInt(article.author_id, 10)
+                : article.author_id,
+          }));
           state.total = action.payload.total;
           state.page = action.payload.page;
           state.limit = action.payload.limit;

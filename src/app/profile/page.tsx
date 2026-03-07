@@ -20,52 +20,71 @@ const ProfilePage: React.FC = () => {
   const handleLogOut = async () => {
     try {
       await authService.logout();
-
       navigation.push("/");
     } catch (error) {
       alert(error);
     }
   };
+
   return (
     <Layout
       title="Profile"
       breadcrumbs={[{ label: "Pages / Profile" }]}
       showSearch={false}
     >
-      <Box sx={{ maxWidth: 600, mx: "auto" }}>
+      <Box
+        sx={{
+          maxWidth: 600,
+          mx: "auto",
+          px: { xs: 2, sm: 0 },
+        }}
+      >
         <Card>
-          <CardContent sx={{ p: 4 }}>
+          <CardContent
+            sx={{
+              p: { xs: 2.5, sm: 3, md: 4 },
+            }}
+          >
+            {/* Avatar Section */}
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                mb: 4,
+                mb: { xs: 3, md: 4 },
               }}
             >
               <Avatar
                 sx={{
-                  width: 100,
-                  height: 100,
+                  width: { xs: 70, sm: 85, md: 100 },
+                  height: { xs: 70, sm: 85, md: 100 },
                   bgcolor: "#000",
-                  fontSize: "2.5rem",
+                  fontSize: { xs: "1.8rem", sm: "2.1rem", md: "2.5rem" },
                   mb: 2,
                 }}
               >
                 U
               </Avatar>
-              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: { xs: "18px", sm: "20px", md: "22px" },
+                }}
+              >
                 User Profile
               </Typography>
             </Box>
 
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Form */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
               <TextField
                 label="Name"
                 defaultValue="John Doe"
                 fullWidth
                 variant="outlined"
               />
+
               <TextField
                 label="Email"
                 type="email"
@@ -73,6 +92,7 @@ const ProfilePage: React.FC = () => {
                 fullWidth
                 variant="outlined"
               />
+
               <TextField
                 label="Role"
                 defaultValue="Administrator"
@@ -80,21 +100,32 @@ const ProfilePage: React.FC = () => {
                 variant="outlined"
                 disabled
               />
+
+              {/* Buttons */}
               <Box
                 sx={{
-                  // pt: 2,
+                  pt: 2,
                   display: "flex",
-                  gap: 2,
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "space-between",
-                  alignItems: "center",
+                  alignItems: { xs: "stretch", sm: "center" },
+                  gap: 2,
                 }}
               >
-                <Box sx={{ pt: 2, display: "flex", gap: 2 }}>
+                {/* Left Buttons */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    flexDirection: { xs: "column", sm: "row" },
+                  }}
+                >
                   <Button
                     variant="contained"
                     sx={{
                       backgroundColor: "#000",
                       color: "white",
+                      width: { xs: "100%", sm: "auto" },
                       "&:hover": {
                         backgroundColor: "#333",
                       },
@@ -102,28 +133,33 @@ const ProfilePage: React.FC = () => {
                   >
                     Save Changes
                   </Button>
-                  <Button variant="outlined">Cancel</Button>
-                </Box>
-                <Box
-                  sx={{
-                    pt: 2,
-                  }}
-                >
+
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     sx={{
-                      backgroundColor: "#FFEEEE",
-                      border: "1px solid #FF7495",
-                      color: "#D32F2F",
-                      "&:hover": {
-                        backgroundColor: "#FFCCCC",
-                      },
+                      width: { xs: "100%", sm: "auto" },
                     }}
-                    onClick={handleLogOut}
                   >
-                    Log Out
+                    Cancel
                   </Button>
                 </Box>
+
+                {/* Logout */}
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#FFEEEE",
+                    border: "1px solid #FF7495",
+                    color: "#D32F2F",
+                    width: { xs: "100%", sm: "auto" },
+                    "&:hover": {
+                      backgroundColor: "#FFCCCC",
+                    },
+                  }}
+                  onClick={handleLogOut}
+                >
+                  Log Out
+                </Button>
               </Box>
             </Box>
           </CardContent>

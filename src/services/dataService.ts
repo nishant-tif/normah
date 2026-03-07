@@ -6,14 +6,17 @@ import type {
   Organization,
   LoginCredentials,
   LoginResponse,
-  Article,
   Category,
   Country,
   State,
   City,
 } from "@/types";
 import apiClient from "./api";
-import { ArticleSearchResponse, PaginationParams } from "@/types/article";
+import {
+  ArticleSearchResponse,
+  PaginationParams,
+  Article,
+} from "@/types/article";
 
 /* ===============================
    AUTH SERVICE

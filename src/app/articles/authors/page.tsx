@@ -23,6 +23,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -38,6 +40,9 @@ import {
 
 const AuthorPage = () => {
   const dispatch = useAppDispatch();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { authors, loading, total } = useAppSelector((state) => state.authors);
 
@@ -56,7 +61,6 @@ const AuthorPage = () => {
   const [editEmail, setEditEmail] = useState("");
   const [formError, setFormError] = useState("");
 
-  // ================= FETCH AUTHORS =================
   useEffect(() => {
     dispatch(
       fetchAuthors({
@@ -67,13 +71,8 @@ const AuthorPage = () => {
     );
   }, [dispatch, search, localPage, rowsPerPage]);
 
-  // ================= VALIDATE EMAIL =================
-  const isValidEmail = (value: string) => {
-    // simple regex
-    return /\S+@\S+\.\S+/.test(value);
-  };
+  const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
 
-  // ================= ADD AUTHOR =================
   const handleAddAuthor = async () => {
     setFormError("");
 
@@ -81,6 +80,7 @@ const AuthorPage = () => {
       setFormError("Name & Email are required");
       return;
     }
+
     if (!isValidEmail(email)) {
       setFormError("Invalid email format");
       return;
@@ -95,17 +95,8 @@ const AuthorPage = () => {
 
     setName("");
     setEmail("");
-
-    dispatch(
-      fetchAuthors({
-        search,
-        page: 1,
-        size: rowsPerPage,
-      }),
-    );
   };
 
-  // ================= ACTION MENU =================
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
     authorId: string,
@@ -114,35 +105,20 @@ const AuthorPage = () => {
     setSelectedAuthorId(authorId);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleMenuClose = () => setAnchorEl(null);
 
-  // ================= DELETE AUTHOR =================
   const handleDelete = async () => {
     if (!selectedAuthorId) return;
 
     await dispatch(deleteAuthor(selectedAuthorId));
     handleMenuClose();
-
-    dispatch(
-      fetchAuthors({
-        search,
-        page: localPage + 1,
-        size: rowsPerPage,
-      }),
-    );
   };
 
-  // ================= OPEN EDIT MODAL =================
   const handleEditClick = () => {
     if (!selectedAuthorId) return;
 
     const author = authors.find((a) => a.author_id === selectedAuthorId);
-    if (!author) {
-      handleMenuClose();
-      return;
-    }
+    if (!author) return;
 
     setEditName(author.author_name);
     setEditEmail(author.author_email);
@@ -158,6 +134,7 @@ const AuthorPage = () => {
       setFormError("Name & Email are required");
       return;
     }
+
     if (!isValidEmail(editEmail)) {
       setFormError("Invalid email format");
       return;
@@ -175,30 +152,33 @@ const AuthorPage = () => {
       );
 
       setEditOpen(false);
-
-      dispatch(
-        fetchAuthors({
-          search,
-          page: localPage + 1,
-          size: rowsPerPage,
-        }),
-      );
     }
   };
 
   return (
     <Layout title="Article Authors">
-      <Box sx={{ p: 4, backgroundColor: "#f6f6f6", minHeight: "100vh" }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
+      <Box
+        sx={{
+          p: { xs: 2, md: 4 },
+          backgroundColor: "#f6f6f6",
+          minHeight: "100vh",
+        }}
+      >
+        <Typography
+          sx={{
+            mb: 3,
+            fontWeight: 600,
+            fontSize: { xs: "22px", sm: "26px", md: "32px" },
+          }}
+        >
           Article Author
         </Typography>
 
-        <Grid spacing={3} sx={{ display: "flex", gap: 4 }}>
+        <Grid container spacing={3}>
           {/* ADD AUTHOR FORM */}
-
-          <Grid sx={{ width: "30%" }}>
-            <Paper sx={{ p: 3, borderRadius: 2 }}>
-              <Typography variant="h6" sx={{ mb: 3 }}>
+          <Grid>
+            <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
                 Add Author
               </Typography>
 
@@ -240,8 +220,8 @@ const AuthorPage = () => {
           </Grid>
 
           {/* AUTHOR TABLE */}
-          <Grid sx={{ width: "70%" }}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
+          <Grid>
+            <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: 2 }}>
               <TextField
                 fullWidth
                 placeholder="Search author"
@@ -253,8 +233,8 @@ const AuthorPage = () => {
                 sx={{ mb: 2 }}
               />
 
-              <TableContainer>
-                <Table>
+              <TableContainer sx={{ overflowX: "auto" }}>
+                <Table sx={{ minWidth: 500 }}>
                   <TableHead>
                     <TableRow>
                       <TableCell>Name</TableCell>
@@ -307,7 +287,11 @@ const AuthorPage = () => {
         </Menu>
 
         {/* EDIT AUTHOR DIALOG */}
-        <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+        <Dialog
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          fullScreen={isMobile}
+        >
           <DialogTitle>Edit Author</DialogTitle>
           <DialogContent>
             {formError && (
@@ -315,6 +299,7 @@ const AuthorPage = () => {
                 {formError}
               </Typography>
             )}
+
             <TextField
               fullWidth
               label="Name"
@@ -322,6 +307,7 @@ const AuthorPage = () => {
               onChange={(e) => setEditName(e.target.value)}
               sx={{ mb: 2 }}
             />
+
             <TextField
               fullWidth
               label="Email"
@@ -329,9 +315,10 @@ const AuthorPage = () => {
               onChange={(e) => setEditEmail(e.target.value)}
             />
           </DialogContent>
+
           <DialogActions>
             <Button onClick={() => setEditOpen(false)}>Cancel</Button>
-            <Button onClick={handleEditSave} variant="contained">
+            <Button variant="contained" onClick={handleEditSave}>
               Save
             </Button>
           </DialogActions>

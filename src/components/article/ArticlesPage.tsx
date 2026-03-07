@@ -10,6 +10,8 @@ import {
   Alert,
   Stack,
   Paper,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,19 +30,16 @@ import ArticleFormMUI from "@/components/article/ArticleFormMUI";
 import Layout from "../layout/Layout";
 import { useRouter } from "next/navigation";
 
-export interface ArticleFormProps {
-  article: Article | null;
-  onSubmit: (formData: Omit<Article, "article_id">) => Promise<void>;
-  onCancel: () => void;
-  loading: boolean;
-}
 export const ArticlesPage: React.FC = () => {
   const navigate = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const { articles, loading, error, selectedArticle, total, page, limit } =
     useSelector((state: RootState) => state.articles);
-  console.log("limit", limit);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [formLoading, setFormLoading] = useState(false);
@@ -66,14 +65,11 @@ export const ArticlesPage: React.FC = () => {
       if (selectedArticle) {
         await dispatch(
           updateArticle({
-            // eslint-disable-next-line
             id: selectedArticle?.id!,
-            // eslint-disable-next-line
             article: formData!,
           }),
         );
       } else {
-        // eslint-disable-next-line
         await dispatch(createArticle(formData as Omit<Article, "id">));
       }
 
@@ -89,7 +85,7 @@ export const ArticlesPage: React.FC = () => {
       setFormLoading(false);
     }
   };
-  // Load Articles
+
   useEffect(() => {
     dispatch(
       fetchArticles({
@@ -98,6 +94,7 @@ export const ArticlesPage: React.FC = () => {
       }),
     );
   }, [dispatch, page, limit, searchQuery, openDialog]);
+
   const handlePageChange = (newPage: number) => {
     dispatch(
       fetchArticles({
@@ -116,14 +113,20 @@ export const ArticlesPage: React.FC = () => {
       }),
     );
   };
+
   const handleNavigation = () => {
     navigate.push("/articles/new");
   };
+
   return (
     <Layout title="">
       <Paper
         elevation={0}
-        sx={{ p: 4, borderRadius: 2, backgroundColor: "#fff" }}
+        sx={{
+          p: { xs: 2, sm: 3, md: 4 },
+          borderRadius: 2,
+          backgroundColor: "#fff",
+        }}
       >
         {/* Header */}
         <Stack
@@ -131,30 +134,34 @@ export const ArticlesPage: React.FC = () => {
           justifyContent="space-between"
           alignItems={{ xs: "flex-start", sm: "center" }}
           spacing={2}
-          sx={{ mb: 4 }}
+          sx={{ mb: { xs: 2.5, md: 4 } }}
         >
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{ fontWeight: 700, mb: 1, color: "#1a1a1a" }}
-            >
-              Articles
-            </Typography>
-          </Box>
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: "#1a1a1a",
+              fontSize: {
+                xs: "22px",
+                sm: "26px",
+                md: "32px",
+              },
+            }}
+          >
+            Articles
+          </Typography>
 
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleNavigation}
-            size="large"
             sx={{
               background: "#000",
               color: "white",
               fontWeight: 600,
-              px: 3,
-              py: 1.5,
+              px: { xs: 2, md: 3 },
+              py: { xs: 1, md: 1.5 },
               textTransform: "none",
-              fontSize: "14px",
+              fontSize: { xs: "13px", md: "14px" },
               "&:hover": {
                 background: "#333",
               },
@@ -204,16 +211,15 @@ export const ArticlesPage: React.FC = () => {
         onClose={handleCloseDialog}
         maxWidth="lg"
         fullWidth
+        fullScreen={isMobile}
         PaperProps={{
-          sx: { borderRadius: 2 },
+          sx: { borderRadius: { xs: 0, sm: 2 } },
         }}
       >
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: { xs: 2, md: 3 } }}>
           <ArticleFormMUI
             article={selectedArticle}
-            // onSubmit={handleSubmit}
             onCancel={handleCloseDialog}
-            // loading={formLoading}
           />
         </Box>
       </Dialog>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,22 +13,30 @@ import {
   Paper,
   Chip,
   IconButton,
+  TablePagination,
 } from "@mui/material";
+
 import Layout from "@/components/layout/Layout";
 import { AddModelModal } from "@/components/modals";
+
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   fetchModels,
   setSelectedModel,
   deleteModel,
 } from "@/store/slices/modelsSlice";
+
 import { openModal } from "@/store/slices/uiSlice";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ModelPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { models, loading } = useAppSelector((state) => state.models);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     dispatch(fetchModels());
@@ -65,6 +73,22 @@ const ModelPage: React.FC = () => {
     }
   };
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedModels = models.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+
   return (
     <Layout
       title="Model"
@@ -72,6 +96,7 @@ const ModelPage: React.FC = () => {
       showSearch={true}
     >
       <Box>
+        {/* HEADER */}
         <Box
           sx={{
             display: "flex",
@@ -81,21 +106,21 @@ const ModelPage: React.FC = () => {
           }}
         >
           <Box />
+
           <Button
             variant="contained"
             onClick={handleAddNew}
             sx={{
-              backgroundColor: "#000000",
+              backgroundColor: "#000",
               color: "white",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
+              "&:hover": { backgroundColor: "#333" },
             }}
           >
             Add New Model
           </Button>
         </Box>
 
+        {/* TABLE */}
         <TableContainer component={Paper} sx={{ boxShadow: 1 }}>
           <Table>
             <TableHead>
@@ -110,9 +135,12 @@ const ModelPage: React.FC = () => {
                   Artifact Location
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Policy</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {loading ? (
                 <TableRow>
@@ -120,30 +148,24 @@ const ModelPage: React.FC = () => {
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : models.length === 0 ? (
+              ) : paginatedModels.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={9} align="center">
                     No models found
                   </TableCell>
                 </TableRow>
               ) : (
-                models.map((model) => {
+                paginatedModels.map((model) => {
                   const riskColor = getRiskCategoryColor(model.riskCategory);
+
                   return (
-                    <TableRow
-                      key={model.id}
-                      hover
-                      sx={{
-                        "&:nth-of-type(odd)": {
-                          backgroundColor: "#fafafa",
-                        },
-                      }}
-                    >
+                    <TableRow key={model.id} hover>
                       <TableCell>{model.name}</TableCell>
                       <TableCell>{model.version}</TableCell>
                       <TableCell>{model.owner}</TableCell>
                       <TableCell>{model.organizations}</TableCell>
                       <TableCell>{model.framework}</TableCell>
+
                       <TableCell>
                         <Chip
                           label={model.riskCategory}
@@ -155,25 +177,33 @@ const ModelPage: React.FC = () => {
                           }}
                         />
                       </TableCell>
+
                       <TableCell>{model.artifactLocation}</TableCell>
                       <TableCell>{model.policy}</TableCell>
-                      <TableCell>
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEdit(model)}
-                            sx={{ color: "#666" }}
-                          >
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDelete(model.model_id)}
-                            sx={{ color: "#666" }}
-                          >
-                            <MoreVertIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
+
+                      {/* ACTIONS */}
+                      <TableCell align="right">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleEdit(model)}
+                          sx={{
+                            color: "#1976d2",
+                            "&:hover": { backgroundColor: "#e3f2fd" },
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDelete(model.model_id)}
+                          sx={{
+                            color: "#d32f2f",
+                            "&:hover": { backgroundColor: "#ffebee" },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
@@ -181,6 +211,17 @@ const ModelPage: React.FC = () => {
               )}
             </TableBody>
           </Table>
+
+          {/* PAGINATION */}
+          <TablePagination
+            component="div"
+            count={models.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
         </TableContainer>
 
         <AddModelModal />

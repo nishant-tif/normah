@@ -1,29 +1,70 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import apiClient from "@/services/api";
 
-export const fetchCountries = createAsyncThunk(
+/* ---------------- TYPES ---------------- */
+
+export interface Country {
+  country_id: number;
+  id: number;
+  countryName: string;
+}
+
+interface CountryState {
+  countries: Country[];
+  loading: boolean;
+  error: string | null;
+}
+
+/* ---------------- THUNK ---------------- */
+
+export const fetchCountries = createAsyncThunk<Country[]>(
   "countries/fetchAll",
-  async () => {
-    const res = await apiClient.post("/general/countries");
-    return [res.data.data];
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.post("/general/countries");
+      return res?.data?.data?.data ?? [];
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
   },
 );
 
+/* ---------------- INITIAL STATE ---------------- */
+
+const initialState: CountryState = {
+  countries: [],
+  loading: false,
+  error: null,
+};
+
+/* ---------------- SLICE ---------------- */
+
 const countrySlice = createSlice({
   name: "countries",
-  initialState: {
-    countries: [],
-    loading: false,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+      /* pending */
       .addCase(fetchCountries.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(fetchCountries.fulfilled, (state, action) => {
+
+      /* success */
+      .addCase(
+        fetchCountries.fulfilled,
+        (state, action: PayloadAction<Country[]>) => {
+          state.loading = false;
+          state.countries = action.payload;
+        },
+      )
+
+      /* error */
+      .addCase(fetchCountries.rejected, (state, action) => {
         state.loading = false;
-        state.countries = action.payload;
+        state.error = action.payload as string;
       });
   },
 });

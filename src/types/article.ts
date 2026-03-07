@@ -43,13 +43,13 @@ export interface Country {
 
 export interface Article {
   id: string;
-  article_id?: string | undefined;
-  article_title: string;
-  article_slug: string;
-  article_content: string;
-  article_visibility: "DRAFT" | "PUBLISHED";
+  article_id?: string | undefined | any;
+  article_title?: string;
+  article_slug?: string;
+  article_content?: string;
+  article_visibility?: "DRAFT" | "PUBLISHED" | undefined;
   article_excerpt?: string;
-  author_id: number;
+  author_id?: number;
   article_thumbnail_image?: string;
   meta_title?: string;
   meta_description?: string;
@@ -82,6 +82,11 @@ export interface ArticleSearchResponse {
   rows: Article[];
   count: number;
 }
+// export interface ArticleListItem {
+//   id: string;
+//   article_title: string;
+//   author_id: string;
+// }
 
 export interface CreateArticleRequest {
   post_title: string;

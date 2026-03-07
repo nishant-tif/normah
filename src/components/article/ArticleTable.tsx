@@ -89,13 +89,15 @@ export const ArticleTable: React.FC<ArticleTableProps> = ({
     }
   };
 
-  const getVisibilityChip = (visibility: string) => {
+  const getVisibilityChip = (visibility: string | undefined) => {
+    const displayVisibility = visibility || "N/A";
     return (
       <Chip
-        label={visibility}
+        label={displayVisibility}
         sx={{
-          backgroundColor: visibility === "PUBLISHED" ? "#d4edda" : "#e2e3e5",
-          color: visibility === "PUBLISHED" ? "#155724" : "#383d41",
+          backgroundColor:
+            displayVisibility === "PUBLISHED" ? "#d4edda" : "#e2e3e5",
+          color: displayVisibility === "PUBLISHED" ? "#155724" : "#383d41",
           fontWeight: 600,
           fontSize: "12px",
         }}

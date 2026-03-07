@@ -4,8 +4,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 export const fetchStates = createAsyncThunk(
   "states/fetchByCountry",
   async (countryId: string) => {
-    const res = await apiClient.get(`/general/states/${countryId}`);
-    return res.data.data;
+    const res = await apiClient.post(`/general/states/${countryId}`);
+    return res?.data?.data?.data ?? [];
   },
 );
 

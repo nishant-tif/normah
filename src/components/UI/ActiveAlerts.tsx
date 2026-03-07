@@ -5,6 +5,7 @@ import { useAppSelector } from "@/store";
 
 const ActiveAlerts = () => {
   const { data } = useAppSelector((state) => state.dashboard);
+
   return (
     <Box
       sx={{
@@ -16,32 +17,86 @@ const ActiveAlerts = () => {
       <Card
         sx={{
           borderRadius: 3,
-          //   minHeight: "24rem",
         }}
       >
-        <CardContent>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+        <CardContent
+          sx={{
+            p: { xs: 2, sm: 2.5, md: 3 },
+          }}
+        >
+          {/* Title */}
+          <Typography
+            sx={{
+              fontWeight: 600,
+              mb: 2,
+              fontSize: {
+                xs: "15px",
+                sm: "16px",
+                md: "18px",
+              },
+            }}
+          >
             Active Alerts
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+
+          {/* Alerts */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: { xs: 1.2, sm: 1.5 },
+            }}
+          >
             {(data?.activeAlerts ?? []).map((alert) => (
               <Box
                 key={alert.id}
                 sx={{
-                  p: 2,
+                  p: { xs: 1.5, sm: 2 },
                   border: "1px solid #FD8A8A",
                   borderRadius: 2,
                   display: "flex",
-                  gap: 1.5,
+                  alignItems: "flex-start",
+                  gap: { xs: 1, sm: 1.5 },
                   bgcolor: "#FFEBEB26",
                 }}
               >
-                <WarningIcon sx={{ color: "#f44336", mt: 0.5 }} />
+                <WarningIcon
+                  sx={{
+                    color: "#f44336",
+                    mt: "2px",
+                    fontSize: {
+                      xs: 18,
+                      sm: 20,
+                      md: 22,
+                    },
+                  }}
+                />
+
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: {
+                        xs: "13px",
+                        sm: "14px",
+                        md: "15px",
+                      },
+                    }}
+                  >
                     {alert.title}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      fontSize: {
+                        xs: "11px",
+                        sm: "12px",
+                        md: "13px",
+                      },
+                      lineHeight: 1.4,
+                    }}
+                  >
                     {alert.description}
                   </Typography>
                 </Box>

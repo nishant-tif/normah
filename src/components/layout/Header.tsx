@@ -28,27 +28,28 @@ const Header: React.FC<HeaderProps> = ({
   onMenuClick,
 }) => {
   return (
-    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", lg: "row" },
+        justifyContent: "space-between",
+        gap: { xs: 2, md: 3 },
+        px: { xs: 2, md: 4 },
+        py: 2,
+      }}
+    >
+      {/* Left Section */}
       <Box
         sx={{
-          px: { xs: 2, md: 4 },
-          py: 2,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
+          alignItems: { xs: "flex-start", md: "center" },
           flexWrap: "wrap",
-          gap: 10,
+          gap: { xs: 2, md: 4 },
+          width: "100%",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          {/* Mobile Menu Button */}
+        {/* Menu + Title */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <IconButton
             onClick={onMenuClick}
             sx={{ display: { xs: "block", md: "none" }, color: "#2d2d2d" }}
@@ -56,42 +57,63 @@ const Header: React.FC<HeaderProps> = ({
             <MenuIcon />
           </IconButton>
 
-          {breadcrumbs.length > 0 && (
-            <Breadcrumbs separator=" / " aria-label="breadcrumb">
-              {breadcrumbs.map((crumb, index) => (
-                <MuiLink
-                  key={index}
-                  href={crumb.href}
-                  color={
-                    index === breadcrumbs.length - 1
-                      ? "text.primary"
-                      : "inherit"
-                  }
-                  underline="none"
-                  sx={{ fontSize: "0.875rem" }}
-                >
-                  {crumb.label}
-                </MuiLink>
-              ))}
-            </Breadcrumbs>
-          )}
+          <Box>
+            {breadcrumbs.length > 0 && (
+              <Breadcrumbs
+                separator=" / "
+                aria-label="breadcrumb"
+                sx={{ mb: 0.5 }}
+              >
+                {breadcrumbs.map((crumb, index) => (
+                  <MuiLink
+                    key={index}
+                    href={crumb.href}
+                    color={
+                      index === breadcrumbs.length - 1
+                        ? "text.primary"
+                        : "inherit"
+                    }
+                    underline="none"
+                    sx={{
+                      fontSize: { xs: "12px", md: "13px" },
+                    }}
+                  >
+                    {crumb.label}
+                  </MuiLink>
+                ))}
+              </Breadcrumbs>
+            )}
 
-          <Typography
-            variant="h6"
+            <Typography
+              sx={{
+                fontWeight: 600,
+                color: "#2d2d2d",
+                fontSize: {
+                  xs: "16px",
+                  sm: "18px",
+                  md: "20px",
+                },
+              }}
+            >
+              {title}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Search */}
+        {showSearch && (
+          <Box
             sx={{
-              fontWeight: 600,
-              color: "#2d2d2d",
-              ml: breadcrumbs.length > 0 ? 2 : 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              width: { xs: "100%", sm: "auto" },
             }}
           >
-            {title}
-          </Typography>
-        </Box>
-        {showSearch && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <TextField
-              placeholder="Type"
+              placeholder="Search..."
               size="small"
+              fullWidth
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -100,19 +122,22 @@ const Header: React.FC<HeaderProps> = ({
                 ),
               }}
               sx={{
-                width: { xs: 120, sm: 150, md: 200 },
+                width: { xs: "100%", sm: 180, md: 220 },
                 "& .MuiOutlinedInput-root": {
                   backgroundColor: "#f5f5f5",
                   borderRadius: 1,
                 },
               }}
             />
+
             <Button
               variant="contained"
               sx={{
                 backgroundColor: "#2d2d2d",
                 color: "white",
-                px: 3,
+                px: { xs: 2, md: 3 },
+                fontSize: { xs: "12px", md: "13px" },
+                whiteSpace: "nowrap",
                 "&:hover": {
                   backgroundColor: "#1a1a1a",
                 },
@@ -124,39 +149,40 @@ const Header: React.FC<HeaderProps> = ({
         )}
       </Box>
 
-      {/* Header Actions */}
+      {/* Right Actions */}
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          pr: 5,
+          justifyContent: { xs: "flex-end", md: "flex-end" },
+          gap: { xs: 1, md: 2 },
+          flexWrap: "wrap",
         }}
       >
-        <Box
-          sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mb: 2 }}
+        <Button
+        //   variant="outlined"
+        //   sx={{
+        //     borderColor: "#000",
+        //     color: "#000",
+        //     fontSize: { xs: "12px", md: "13px" },
+        //     px: { xs: 1.5, md: 2 },
+        //     "&:hover": { borderColor: "#000", backgroundColor: "#f5f5f5" },
+        //   }}
         >
-          <Button
-            variant="outlined"
-            sx={{
-              borderColor: "#000",
-              color: "#000",
-              "&:hover": { borderColor: "#000", backgroundColor: "#f5f5f5" },
-            }}
-          >
-            India AI Framework
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#000",
-              color: "white",
-              "&:hover": { backgroundColor: "#333" },
-            }}
-          >
-            Export Report
-          </Button>
-        </Box>
+          {/* // India AI Framework */}
+        </Button>
+
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: "#000",
+            color: "white",
+            fontSize: { xs: "12px", md: "13px" },
+            px: { xs: 1.5, md: 2 },
+            "&:hover": { backgroundColor: "#333" },
+          }}
+        >
+          Export Report
+        </Button>
       </Box>
     </Box>
   );
